@@ -409,7 +409,7 @@ macos/Runner/GoogleService-Info.plist
 
 **/.DS_Store
 .flutter-plugins
-.flutter-plugins*
+.flutter-plugins-dependencies
 macos/Flutter/ephemeral
 macos/Flutter/*
 ios/Flutter
