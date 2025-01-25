@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class RoundedRectangle extends StatelessWidget {
+class TextBubble extends StatelessWidget {
   final double borderRadiusAmt;
   final Color containerColor;
   final EdgeInsetsGeometry paddingInset;
   final Widget childWidget;
 
-  const RoundedRectangle({
+  const TextBubble({
     super.key,
     this.borderRadiusAmt = 15.0,
     this.containerColor = const Color(0xFFD2C3B3),

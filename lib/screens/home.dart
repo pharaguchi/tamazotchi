@@ -3,6 +3,7 @@ import 'package:tamazotchi/screens/home/home_screen.dart';
 import 'package:tamazotchi/services/auth.dart';
 import 'package:tamazotchi/models/user.dart';
 import 'package:tamazotchi/services/database.dart';
+import 'package:tamazotchi/screens/feed/feed_screen.dart';
 
 class Home extends StatefulWidget {
   Home({super.key, required this.user, required this.databaseService});
@@ -15,7 +16,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final AuthService _auth = AuthService();
-  int navBarIdx = 0;
+  int navBarIdx = 1;
 
   setNavBarIdx(idx) {
     setState(() {
@@ -32,6 +33,7 @@ class _HomeState extends State<Home> {
             User userInfo = userSnapshot.data!;
             List<Widget> pages = [
               HomeScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
+              FeedScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
               HomeScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
             ];
 
@@ -49,6 +51,8 @@ class _HomeState extends State<Home> {
                     items: const [
                       BottomNavigationBarItem(
                           icon: Icon(Icons.home), label: 'Home'),
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.chat_bubble), label: 'Feed'),
                       BottomNavigationBarItem(
                           icon: Icon(Icons.settings), label: 'Setting'),
                     ],
