@@ -150,3 +150,9 @@ app.*.symbols
 .python-version
 .gclient_previous_custom_vars
 .gclient_previous_sync_commits
+
+**/.DS_Store
+.flutter-plugins*
+macos/Flutter/ephemeral
+ios/Flutter
+.dart_tool/package_config*
