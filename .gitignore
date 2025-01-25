@@ -156,3 +156,7 @@ app.*.symbols
 macos/Flutter/ephemeral
 ios/Flutter
 .dart_tool/package_config*
+
+# firebase stuff
+android/app/google-services.json
+lib/firebase_options.dart
