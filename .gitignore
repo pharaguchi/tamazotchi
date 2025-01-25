@@ -408,3 +408,7 @@ ios/Runner/GoogleService-Info.plist
 macos/Runner/GoogleService-Info.plist
 
 **/.DS_Store
+.flutter-plugins*
+macos/Flutter/ephemeral
+ios/Flutter
+.dart_tool/package_config*
