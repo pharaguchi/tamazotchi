@@ -34,34 +34,8 @@ class _HomeState extends State<Home> {
               HomeScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
               HomeScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
             ];
-            List<String> titles = ["Home", "Setting"];
 
             return Scaffold(
-                appBar: AppBar(
-                  title: Text(titles[navBarIdx]),
-                  backgroundColor: Colors.brown,
-                  elevation: 0.0,
-                  actions: <Widget>[
-                    TextButton(
-                      child: Icon(Icons.home),
-                      style:
-                          TextButton.styleFrom(foregroundColor: Colors.white),
-                      onPressed: () {
-                        setState(() {
-                          navBarIdx = 0;
-                        });
-                      },
-                    ),
-                    TextButton(
-                      child: Icon(Icons.exit_to_app),
-                      style:
-                          TextButton.styleFrom(foregroundColor: Colors.white),
-                      onPressed: () async {
-                        await _auth.signOut();
-                      },
-                    ),
-                  ],
-                ),
                 bottomNavigationBar: SafeArea(
                   child: BottomNavigationBar(
                     type: BottomNavigationBarType.fixed,
