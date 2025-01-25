@@ -32,10 +32,9 @@ class _HomeState extends State<Home> {
             User userInfo = userSnapshot.data!;
             List<Widget> pages = [
               HomeScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
+              HomeScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
             ];
-            List<String> titles = [
-              "Home",
-            ];
+            List<String> titles = ["Home", "Setting"];
 
             return Scaffold(
                 appBar: AppBar(
@@ -62,6 +61,24 @@ class _HomeState extends State<Home> {
                       },
                     ),
                   ],
+                ),
+                bottomNavigationBar: SafeArea(
+                  child: BottomNavigationBar(
+                    type: BottomNavigationBarType.fixed,
+                    backgroundColor: Colors.black,
+                    selectedItemColor: Colors.brown,
+                    unselectedItemColor: Colors.blue,
+                    currentIndex: navBarIdx,
+                    onTap: (int idx) {
+                      setNavBarIdx(idx);
+                    },
+                    items: const [
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.home), label: 'Home'),
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.settings), label: 'Setting'),
+                    ],
+                  ),
                 ),
                 body: SingleChildScrollView(child: pages[navBarIdx]));
           } else {
