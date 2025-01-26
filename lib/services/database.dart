@@ -13,19 +13,41 @@ class DatabaseService {
   // Users
 
   Future<void> updateUserData(
-    String name,
-    String email,
-  ) async {
+      {required String name,
+      required String email,
+      required int points,
+      required String tamagotchi}) async {
     return await userCollection.doc(uid).set({
       'name': name,
       'email': email,
+      'points': points,
+      'tamagotchi': tamagotchi,
+    });
+  }
+
+  Future<void> updateTamagotchi(String newTamagotchi) async {
+    await userCollection.doc(uid).update({'tamagotchi': newTamagotchi});
+  }
+
+  Future<void> updateName(String newName) async {
+    await userCollection.doc(uid).update({'name': newName});
+  }
+
+  Future<void> updatePoints(int delta) async {
+    await userCollection.doc(uid).update({
+      'points': FieldValue.increment(delta),
     });
   }
 
   User _userFromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
 
-    return User(uid: uid, name: data?['name'], email: data?['email']);
+    return User(
+        uid: uid,
+        name: data?['name'],
+        email: data?['email'],
+        points: data?['points'],
+        tamagotchi: data?['tamagotchi']);
   }
 
   Stream<User> get user {

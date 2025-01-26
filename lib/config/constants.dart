@@ -28,7 +28,7 @@ final simpleInputDecoration = InputDecoration(
 
 List<String> tamagotchiNames = [
   "bananahairtchi",
-  "bubbletchi_happy",
+  "bubbletchi",
   "dresstchi",
   "drumcrubitchi",
   "gunchitchi",
@@ -52,13 +52,12 @@ List<String> tamagotchiNames = [
   "sebiretchi",
   "shimashimatchi",
   "shurikentchi",
-  "shykutchi_angry",
+  "shykutchi",
   "slimypatchy",
   "tustustchi",
   "teftetchi",
   "unimarcorn",
   "weeptchi",
-  "weeptchi_pixel",
   "woopatchi",
   "yooyutchi",
   "welcotchi",

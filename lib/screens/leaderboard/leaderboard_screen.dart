@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tamazotchi/models/user.dart';
 import 'package:tamazotchi/services/database.dart';
+import 'package:tamazotchi/util.dart';
 
 class LeaderboardScreen extends StatefulWidget {
   LeaderboardScreen(
@@ -66,18 +67,39 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 itemCount: leaderboard.length,
                 itemBuilder: (context, index) {
                   final user = leaderboard[index];
+                  final tamagotchiImage = getTamagotchiImageLink(
+                    user.tamagotchi.isNotEmpty ? user.tamagotchi : 'bubbletchi',
+                  );
+                  final rank = index + 1;
+
                   return ListTile(
-                    leading: Text(
-                      '${index + 1}', // Rank
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '#$rank',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 8),
+                        Image.asset(
+                          tamagotchiImage,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Provide a fallback if the image doesn't exist
+                            return const Icon(Icons.error);
+                          },
+                        ),
+                      ],
                     ),
-                    title: Text(
-                      user.name, // User name
-                      style: const TextStyle(fontSize: 16),
-                    ),
+                    title: Text(user.name),
                     trailing: Text(
-                      '${user.points} pts', // Points
-                      style: const TextStyle(color: Colors.grey),
+                      '${user.points} pts',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: Colors.grey,
+                      ),
                     ),
                   );
                 },
