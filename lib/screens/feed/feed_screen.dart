@@ -198,10 +198,7 @@ class _FeedScreenState extends State<FeedScreen> {
           ),
           Center(
             child: RoundedRectangle(
-              childWidget: SizedBox(
-                  child: image != ''
-                      ? Image.asset(image)
-                      : Image.asset('trail.jpg')),
+              childWidget: SizedBox(child: Image.asset('trail.jpg')),
             ),
           ),
           SizedBox(
