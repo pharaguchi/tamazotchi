@@ -113,7 +113,7 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                         'title': _formTitle,
                         'description': _formDescription,
                         'category': _formCategory,
-                        'image': _image?.path ?? 'default_image_path',
+                        'image': 'trail.jpg', // Default image path
                         'likes': 0,
                         'flagged': 0,
                         'date': DateTime.now(),
@@ -124,7 +124,6 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                         _formTitle = '';
                         _formDescription = '';
                         _formCategory = '';
-                        _image = null;
                       });
                       Navigator.of(context).pop();
                     }
@@ -172,7 +171,13 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
           Text(post.title,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           SizedBox(height: 8),
-          if (post.image.isNotEmpty) Center(child: Image.network(post.image)),
+          Center(
+            child: RoundedRectangle(
+              childWidget: SizedBox(
+                child: Image.asset('trail.jpg'),
+              ),
+            ),
+          ),
           SizedBox(height: 8),
           Text(post.description),
           SizedBox(height: 8),
