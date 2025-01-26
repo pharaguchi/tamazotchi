@@ -518,6 +518,8 @@ class _FeedScreenState extends State<FeedScreen> {
                                                                 int.parse(
                                                                     form_numeric_value);
                                                           }
+                                                          _user.points += int.parse(
+                                                              form_numeric_value);
 
                                                           await DatabaseService(
                                                             uid: _user.uid,
