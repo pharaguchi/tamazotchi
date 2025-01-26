@@ -1,4 +1,5 @@
 import 'package:tamazotchi/models/user.dart';
+import 'package:tamazotchi/models/post.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
@@ -9,6 +10,9 @@ class DatabaseService {
 
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
+
+  final CollectionReference postsCollection =
+      FirebaseFirestore.instance.collection('posts');
 
   // Users
 
@@ -42,5 +46,84 @@ class DatabaseService {
     DateTime tomorrow = DateTime(date.year, date.month, date.day + 1);
 
     return [today, tomorrow];
+  }
+
+  // Posts
+
+  Future<void> createPost(
+    String name,
+    String title,
+    String description,
+    String category,
+    String image,
+    int likes,
+    bool flagged,
+    DateTime date,
+  ) async {
+    await postsCollection.add({
+      "name": name,
+      "title": title,
+      "description": description,
+      "category": category,
+      "image": image,
+      "likes": likes,
+      "flagged": flagged,
+      "date": date,
+    });
+  }
+
+  Future<void> updatePostsData(String uid, DateTime date,
+      {bool addLike = false, bool flagged = false}) async {
+    List<dynamic> postInfo = await getPost();
+    Post post = postInfo[0];
+    String docId = postInfo[1];
+
+    return await postsCollection.doc(docId).set({
+      'date': post.date,
+      'name': post.name,
+      'title': post.title,
+      'description': post.description,
+      'category': post.category,
+      'image': post.image,
+      'likes': addLike ? post.likes + 1 : post.likes,
+      'flagged': post.flagged,
+    });
+  }
+
+  Post _postFromSnapshot(DocumentSnapshot snapshot) {
+    Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+
+    return Post.fromData(data ?? {});
+  }
+
+  Stream<List<Post>> get post {
+    return postsCollection.snapshots().map((snapshot) {
+      if (snapshot.docs.isNotEmpty) {
+        return snapshot.docs.map((doc) {
+          Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+
+          return _postFromSnapshot(doc);
+        }).toList();
+      } else {
+        return [
+          Post(
+            date: DateTime.now(),
+          )
+        ];
+      }
+    });
+  }
+
+  Future<List<dynamic>> getPost() async {
+    QuerySnapshot querySnapshot = await postsCollection.get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
+      Map<String, dynamic> data =
+          documentSnapshot.data() as Map<String, dynamic>;
+      return [Post.fromData(data), documentSnapshot.id];
+    } else {
+      throw Exception('No posts found');
+    }
   }
 }

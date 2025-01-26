@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tamazotchi/components/rounded_rectangle.dart';
 import 'package:tamazotchi/models/user.dart';
 import 'package:tamazotchi/services/auth.dart';
+import 'package:tamazotchi/services/database.dart';
 import 'package:tamazotchi/components/text_bubble.dart';
+import 'package:tamazotchi/models/post.dart';
 
 class FeedScreen extends StatefulWidget {
   FeedScreen({Key? key, required User user, required Function setNavBarIdx})
@@ -14,18 +16,22 @@ class FeedScreen extends StatefulWidget {
   final Function setNavBarIdx;
 
   @override
-  State<FeedScreen> createState() => _HomeScreenState();
+  State<FeedScreen> createState() => _FeedScreenState();
 }
 
-class _HomeScreenState extends State<FeedScreen> {
+class _FeedScreenState extends State<FeedScreen> {
   final AuthService _auth = AuthService();
   late User _user;
   late Function setNavBarIdx;
+  late final DatabaseService databaseService;
 
   @override
   void initState() {
     _user = widget._user;
     setNavBarIdx = widget.setNavBarIdx;
+    databaseService = DatabaseService(
+      uid: _user.uid,
+    );
 
     super.initState();
   }
@@ -75,7 +81,15 @@ class _HomeScreenState extends State<FeedScreen> {
     );
   }
 
-  Widget get Post {
+  Widget PostTemplate(
+      {required DateTime date,
+      required String name,
+      required String title,
+      required String description,
+      required String category,
+      required String image,
+      required int likes,
+      required bool flagged}) {
     return RoundedRectangle(
       childWidget: Padding(
         padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
@@ -83,7 +97,7 @@ class _HomeScreenState extends State<FeedScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('User',
+              Text(title,
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.black,
@@ -95,28 +109,31 @@ class _HomeScreenState extends State<FeedScreen> {
               ),
             ],
           ),
-          SizedBox(
-            height: 8,
-          ),
           Text(
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec efficitur, enim ut fringilla fringilla, enim ligula finibus enim, in finibus enim enim ut enim.',
-            style: TextStyle(fontSize: 15),
-          ),
-          SizedBox(
-            height: 2,
-          ),
-          Text(
-            '#Sustainable Transportation.',
+            'by ' + name,
             style: TextStyle(fontSize: 12),
           ),
           SizedBox(
             height: 4,
           ),
+          Text(
+            description,
+            style: TextStyle(fontSize: 15),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+            '#' + category,
+            style: TextStyle(fontSize: 12),
+          ),
+          SizedBox(
+            height: 5,
+          ),
           Center(
             child: RoundedRectangle(
-                childWidget: SizedBox(
-                    height: 200, child: Image.asset('assets/images/earth.png')),
-                containerColor: const Color.fromARGB(255, 195, 228, 235)),
+              childWidget: SizedBox(height: 200, child: Image.asset(image)),
+            ),
           ),
           SizedBox(
             height: 8,
@@ -126,7 +143,7 @@ class _HomeScreenState extends State<FeedScreen> {
             SizedBox(
               width: 4,
             ),
-            Text('25 likes',
+            Text(likes.toString() + ' likes',
                 style: TextStyle(fontSize: 15, color: Colors.black)),
           ])
         ]),
@@ -135,55 +152,73 @@ class _HomeScreenState extends State<FeedScreen> {
     );
   }
 
-  Widget get Posts {
-    return Wrap(
-      spacing: 8.0,
-      runSpacing: 16.0,
-      children: [Post, Post, Post],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      SizedBox(
-        height: 16,
-      ),
-      Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-          child: Column(children: [
-            Stack(
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Text('Feed',
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: Colors.black,
-                      )),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Icon(
-                    size: 30,
-                    Icons.note_add_outlined,
-                    color: Colors.black,
+    return StreamBuilder<List<Post>>(
+        stream: databaseService.post,
+        builder: (context, postSnapshot) {
+          if (postSnapshot.hasData) {
+            List<Post> postInfos = postSnapshot.data!;
+
+            return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 16,
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            FilterOptions,
-            SizedBox(
-              height: 16,
-            ),
-            Posts,
-            SizedBox(
-              height: 16,
-            ),
-          ]))
-    ]);
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      child: Column(children: [
+                        Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text('Feed',
+                                  style: TextStyle(
+                                    fontSize: 30,
+                                    color: Colors.black,
+                                  )),
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Icon(
+                                size: 30,
+                                Icons.note_add_outlined,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        FilterOptions,
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Column(
+                          children: postInfos.map((post) {
+                            return PostTemplate(
+                              date: post.date,
+                              name: post.name,
+                              title: post.title,
+                              description: post.description,
+                              category: post.category,
+                              image: post.image,
+                              likes: post.likes,
+                              flagged: post.flagged,
+                            );
+                          }).toList(),
+                        ),
+                        SizedBox(
+                          height: 16,
+                        ),
+                      ]))
+                ]);
+          } else {
+            // return SizedBox(height: 0);
+            return Text('NONE FOUND');
+          }
+        });
   }
 }
