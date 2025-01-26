@@ -67,11 +67,15 @@ class BadgeDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Display the appropriate badge icon based on progress
-            Image.asset(
-              badgeImage,
-              height: 120,
-              width: 120,
+            // Display the appropriate badge icon based on progress with rounded corners
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16.0),  // Rounded corners for the image
+              child: Image.asset(
+                badgeImage,
+                height: 400,
+                width: 400,
+                fit: BoxFit.cover,  // Ensure the image fills the container while keeping the aspect ratio
+              ),
             ),
             SizedBox(height: 20),
 
