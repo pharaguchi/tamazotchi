@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tamazotchi/screens/home/home_screen.dart';
 import 'package:tamazotchi/screens/leaderboard/leaderboard_screen.dart';
+import 'package:tamazotchi/screens/settings/settings_screen.dart';
 import 'package:tamazotchi/services/auth.dart';
 import 'package:tamazotchi/models/user.dart';
 import 'package:tamazotchi/services/database.dart';
@@ -33,7 +34,7 @@ class _HomeState extends State<Home> {
             User userInfo = userSnapshot.data!;
             List<Widget> pages = [
               HomeScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
-              HomeScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
+              SettingsScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
               LeaderboardScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
             ];
 
@@ -52,7 +53,7 @@ class _HomeState extends State<Home> {
                       BottomNavigationBarItem(
                           icon: Icon(Icons.home), label: 'Home'),
                       BottomNavigationBarItem(
-                          icon: Icon(Icons.settings), label: 'Setting'),
+                          icon: Icon(Icons.settings), label: 'Settings'),
                       BottomNavigationBarItem(
                           icon: Icon(Icons.leaderboard), label: 'Leaderboard'),
                     ],

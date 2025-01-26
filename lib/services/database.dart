@@ -26,10 +26,12 @@ class DatabaseService {
   }
 
   Future<void> updateTamagotchi(String newTamagotchi) async {
+    print('Updating tamagotchi to $newTamagotchi');
     await userCollection.doc(uid).update({'tamagotchi': newTamagotchi});
   }
 
   Future<void> updateName(String newName) async {
+    print('Updating name to $newName');
     await userCollection.doc(uid).update({'name': newName});
   }
 
