@@ -85,7 +85,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           tamagotchiImage,
                           width: 40,
                           height: 40,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
                             // Provide a fallback if the image doesn't exist
                             return const Icon(Icons.error);
