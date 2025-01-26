@@ -43,4 +43,19 @@ class DatabaseService {
 
     return [today, tomorrow];
   }
+
+  Stream<List<User>> get leaderboard {
+    return userCollection
+        .orderBy('points', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return User.fromData({
+          'uid': doc.id, // Ensure UID is included
+          ...data, // Merge Firestore data
+        });
+      }).toList();
+    });
+  }
 }
