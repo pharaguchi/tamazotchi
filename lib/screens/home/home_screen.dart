@@ -3,6 +3,7 @@ import 'package:tamazotchi/models/user.dart';
 import 'package:tamazotchi/services/auth.dart';
 import 'package:tamazotchi/screens/home/badges.dart';
 import 'package:tamazotchi/screens/home/friends.dart';
+import 'package:tamazotchi/screens/home/myPosts.dart';
 import 'package:tamazotchi/util.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -33,12 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Method to navigate to the BadgePage
   void _navigateToBadges() {
-    // Navigate to the BadgePage
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) =>
-              BadgePage()), // Ensure BadgePage exists or is imported
+      MaterialPageRoute(builder: (context) => BadgePage()),
     );
   }
 
@@ -50,42 +48,46 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Method to navigate to the MyPostsScreen
+  void _navigateToMyPosts() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UserPostsScreen(user: _user),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // The rest of the content in the column, centered
-        SizedBox(
-            height: 60), // Add some space to push the rest of the content down
+        SizedBox(height: 60),
         Center(
           child: Text(
-            'Hi ${_user.name}!', // Main text/content
+            'Hi ${_user.name}!', // Main greeting
             style: TextStyle(fontSize: 24),
           ),
         ),
-        // Align the entire widget (icon + text) to the top-right corner
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             GestureDetector(
-              onTap: _navigateToFriends,
+              onTap: _navigateToMyPosts, // Navigate to My Posts
               child: Padding(
-                padding: const EdgeInsets.only(
-                    top: 16, left: 16), // Padding from top and right
+                padding: const EdgeInsets.only(top: 16, left: 16),
                 child: Column(
-                  mainAxisSize: MainAxisSize
-                      .min, // The column only takes as much space as needed
-                  crossAxisAlignment: CrossAxisAlignment
-                      .center, // Center icon and text horizontally
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.chat_outlined,
-                      size: 70, // Size of the badge icon
-                      color: Colors.blue, // Icon color
+                      size: 70,
+                      color: Colors.blue,
                     ),
-                    SizedBox(height: 8), // Space between the icon and the text
+                    SizedBox(height: 8),
                     Text(
-                      'My Posts', // Text displayed under the icon
+                      'My Posts',
                       style: TextStyle(fontSize: 16),
                     ),
                   ],
@@ -93,24 +95,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             GestureDetector(
-              onTap: _navigateToFriends, // Navigate to FriendsPage on tap
+              onTap: _navigateToFriends, // Navigate to Friends
               child: Padding(
-                padding: const EdgeInsets.only(
-                    top: 16, right: 16), // Padding from top and right
+                padding: const EdgeInsets.only(top: 16, right: 16),
                 child: Column(
-                  mainAxisSize: MainAxisSize
-                      .min, // The column only takes as much space as needed
-                  crossAxisAlignment: CrossAxisAlignment
-                      .center, // Center icon and text horizontally
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.perm_contact_calendar_rounded,
-                      size: 70, // Size of the badge icon
-                      color: Colors.blue, // Icon color
+                      size: 70,
+                      color: Colors.blue,
                     ),
-                    SizedBox(height: 8), // Space between the icon and the text
+                    SizedBox(height: 8),
                     Text(
-                      'Friends', // Text displayed under the icon
+                      'Friends',
                       style: TextStyle(fontSize: 16),
                     ),
                   ],
@@ -118,24 +117,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             GestureDetector(
-              onTap: _navigateToBadges, // Navigate to BadgePage on tap
+              onTap: _navigateToBadges, // Navigate to Badges
               child: Padding(
-                padding: const EdgeInsets.only(
-                    top: 16, right: 16), // Padding from top and right
+                padding: const EdgeInsets.only(top: 16, right: 16),
                 child: Column(
-                  mainAxisSize: MainAxisSize
-                      .min, // The column only takes as much space as needed
-                  crossAxisAlignment: CrossAxisAlignment
-                      .center, // Center icon and text horizontally
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.badge_outlined,
-                      size: 70, // Size of the badge icon
-                      color: Colors.blue, // Icon color
+                      size: 70,
+                      color: Colors.blue,
                     ),
-                    SizedBox(height: 8), // Space between the icon and the text
+                    SizedBox(height: 8),
                     Text(
-                      'My Badges', // Text displayed under the icon
+                      'My Badges',
                       style: TextStyle(fontSize: 16),
                     ),
                   ],
@@ -161,30 +157,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       crossAxisAlignment: CrossAxisAlignment.center,
-//       children: [
-//         // Badge Icon that when tapped will navigate to BadgePage
-//         GestureDetector(
-//           onTap: _navigateToBadges,  // Navigate to BadgePage on tap
-//           child: Icon(
-//             Icons.badge,
-//             size: 50,  // Size of the badge icon
-//             color: Colors.blue,  // Icon color
-//           ),
-//         ),
-//         SizedBox(height: 20),  // Add some space
-//         Text(
-//           'My Badges',  // Display user name
-//           style: TextStyle(fontSize: 16),
-//         ),
-//         SizedBox(height: 10),  // Add some space
-//         // You can add more widgets if needed, but this is minimal
-//       ],
-//     );
-//   }
-// }
