@@ -95,7 +95,7 @@ class BadgeDetailsPage extends StatelessWidget {
 
             // Miles completed vs total goal
             Text(
-              '$totalMiles / $totalGoal miles completed',
+              '$totalMiles / $totalGoal completed',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
