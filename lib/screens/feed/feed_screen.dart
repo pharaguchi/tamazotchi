@@ -168,7 +168,7 @@ class _FeedScreenState extends State<FeedScreen> {
       required String category,
       required String image,
       required int likes,
-      required bool flagged}) {
+      required int flagged}) {
     return RoundedRectangle(
       childWidget: Padding(
         padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
@@ -184,7 +184,7 @@ class _FeedScreenState extends State<FeedScreen> {
               IconButton(
                 onPressed: () async => {
                   await DatabaseService()
-                      .updatePostsData(addLike: false, flagged: true),
+                      .updatePostsData(addLike: false, addFlagged: true),
                 },
                 icon: Icon(
                   size: 30,
@@ -213,7 +213,7 @@ class _FeedScreenState extends State<FeedScreen> {
               ),
               onPressed: () async => {
                 await DatabaseService()
-                    .updatePostsData(addLike: true, flagged: false),
+                    .updatePostsData(addLike: true, addFlagged: false),
               },
               icon: Icon(Icons.favorite_border, size: 20, color: Colors.black),
             ),
@@ -270,274 +270,248 @@ class _FeedScreenState extends State<FeedScreen> {
     return StreamBuilder<List<Post>>(
         stream: databaseService.post,
         builder: (context, postSnapshot) {
-          if (postSnapshot.hasData) {
-            List<Post> postInfos = postSnapshot.data!;
+          List<Post> postInfos = postSnapshot.data ?? [];
 
-            return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Padding(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                      child: Column(children: [
-                        Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: Text('Feed',
-                                  style: TextStyle(
-                                    fontSize: 30,
-                                    color: Colors.black,
-                                  )),
-                            ),
-                            Align(
-                                alignment: Alignment.centerRight,
-                                child: IconButton(
-                                  onPressed: () async {
-                                    await showDialog<void>(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                              content: Stack(
-                                                clipBehavior: Clip.none,
+          return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            SizedBox(
+              height: 16,
+            ),
+            Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                child: Column(children: [
+                  Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Text('Feed',
+                            style: TextStyle(
+                              fontSize: 30,
+                              color: Colors.black,
+                            )),
+                      ),
+                      Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            onPressed: () async {
+                              await showDialog<void>(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        content: Stack(
+                                          clipBehavior: Clip.none,
+                                          children: <Widget>[
+                                            Positioned(
+                                              right: -40,
+                                              top: -40,
+                                              child: InkResponse(
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const CircleAvatar(
+                                                  child: Icon(Icons.close),
+                                                ),
+                                              ),
+                                            ),
+                                            Form(
+                                              key: _formKey,
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
                                                 children: <Widget>[
-                                                  Positioned(
-                                                    right: -40,
-                                                    top: -40,
-                                                    child: InkResponse(
-                                                      onTap: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                      child: const CircleAvatar(
-                                                        child:
-                                                            Icon(Icons.close),
+                                                  Text("Create a post!",
+                                                      style: TextStyle(
+                                                          fontSize: 20)),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: TextFormField(
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintText: 'Title',
                                                       ),
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          form_title = value;
+                                                        });
+                                                      },
                                                     ),
                                                   ),
-                                                  Form(
-                                                    key: _formKey,
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: TextFormField(
+                                                      maxLines: 5,
+                                                      keyboardType:
+                                                          TextInputType
+                                                              .multiline,
+                                                      scrollPhysics:
+                                                          BouncingScrollPhysics(),
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintText: 'Description',
+                                                      ),
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          form_description =
+                                                              value;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child:
+                                                        DropdownButtonFormField<
+                                                            String>(
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintText: 'Category',
+                                                      ),
+                                                      items: [
+                                                        DropdownMenuItem(
+                                                          value: '',
+                                                          child: Text('All'),
+                                                        ),
+                                                        DropdownMenuItem(
+                                                          value:
+                                                              'Sustainable Transportation',
+                                                          child: Text(
+                                                              'Sustainable Transportation'),
+                                                        ),
+                                                        DropdownMenuItem(
+                                                          value:
+                                                              'Reusable Waterbottle',
+                                                          child: Text(
+                                                              'Reusable Waterbottle'),
+                                                        ),
+                                                        DropdownMenuItem(
+                                                          value:
+                                                              'Energy Conservation',
+                                                          child: Text(
+                                                              'Energy Conservation'),
+                                                        ),
+                                                        DropdownMenuItem(
+                                                          value:
+                                                              'Waste Reduction',
+                                                          child: Text(
+                                                              'Waste Reduction'),
+                                                        ),
+                                                        DropdownMenuItem(
+                                                          value:
+                                                              'Conscious Conservation',
+                                                          child: Text(
+                                                              'Conscious Conservation'),
+                                                        ),
+                                                        DropdownMenuItem(
+                                                          value:
+                                                              'Community Engagement',
+                                                          child: Text(
+                                                              'Community Engagement'),
+                                                        ),
+                                                      ],
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          form_category =
+                                                              value!;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
                                                     child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: <Widget>[
-                                                        Text("Create a post!",
-                                                            style: TextStyle(
-                                                                fontSize: 20)),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                          child: TextFormField(
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText: 'Title',
-                                                            ),
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                form_title =
-                                                                    value;
-                                                              });
-                                                            },
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                          child: TextFormField(
-                                                            maxLines: 5,
-                                                            keyboardType:
-                                                                TextInputType
-                                                                    .multiline,
-                                                            scrollPhysics:
-                                                                BouncingScrollPhysics(),
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText:
-                                                                  'Description',
-                                                            ),
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                form_description =
-                                                                    value;
-                                                              });
-                                                            },
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                          child:
-                                                              DropdownButtonFormField<
-                                                                  String>(
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText:
-                                                                  'Category',
-                                                            ),
-                                                            items: [
-                                                              DropdownMenuItem(
-                                                                value: '',
-                                                                child:
-                                                                    Text('All'),
-                                                              ),
-                                                              DropdownMenuItem(
-                                                                value:
-                                                                    'Sustainable Transportation',
-                                                                child: Text(
-                                                                    'Sustainable Transportation'),
-                                                              ),
-                                                              DropdownMenuItem(
-                                                                value:
-                                                                    'Reusable Waterbottle',
-                                                                child: Text(
-                                                                    'Reusable Waterbottle'),
-                                                              ),
-                                                              DropdownMenuItem(
-                                                                value:
-                                                                    'Energy Conservation',
-                                                                child: Text(
-                                                                    'Energy Conservation'),
-                                                              ),
-                                                              DropdownMenuItem(
-                                                                value:
-                                                                    'Waste Reduction',
-                                                                child: Text(
-                                                                    'Waste Reduction'),
-                                                              ),
-                                                              DropdownMenuItem(
-                                                                value:
-                                                                    'Conscious Conservation',
-                                                                child: Text(
-                                                                    'Conscious Conservation'),
-                                                              ),
-                                                              DropdownMenuItem(
-                                                                value:
-                                                                    'Community Engagement',
-                                                                child: Text(
-                                                                    'Community Engagement'),
-                                                              ),
-                                                            ],
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                form_category =
-                                                                    value!;
-                                                              });
-                                                            },
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                          child: Column(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              TextButton(
-                                                                  onPressed:
-                                                                      _pickImage,
-                                                                  child: Text(
-                                                                      'Upload Image'))
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                          child: ElevatedButton(
-                                                            child: const Text(
-                                                                'Submit'),
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        TextButton(
                                                             onPressed:
-                                                                () async {
-                                                              if (_formKey
-                                                                  .currentState!
-                                                                  .validate()) {
-                                                                await DatabaseService()
-                                                                    .postsCollection
-                                                                    .add({
-                                                                  'name': _user
-                                                                      .name,
-                                                                  'title':
-                                                                      form_title,
-                                                                  'description':
-                                                                      form_description,
-                                                                  'category':
-                                                                      form_category,
-                                                                  'image':
-                                                                      'trail.jpg',
-                                                                  'likes': 0,
-                                                                  'flagged':
-                                                                      false,
-                                                                  'date':
-                                                                      DateTime
-                                                                          .now(),
-                                                                  'uid':
-                                                                      _user.uid
-                                                                });
-                                                                _formKey
-                                                                    .currentState!
-                                                                    .save();
-                                                              }
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                          ),
-                                                        )
+                                                                _pickImage,
+                                                            child: Text(
+                                                                'Upload Image'))
                                                       ],
                                                     ),
                                                   ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    child: ElevatedButton(
+                                                      child:
+                                                          const Text('Submit'),
+                                                      onPressed: () async {
+                                                        if (_formKey
+                                                            .currentState!
+                                                            .validate()) {
+                                                          await DatabaseService()
+                                                              .postsCollection
+                                                              .add({
+                                                            'name': _user.name,
+                                                            'title': form_title,
+                                                            'description':
+                                                                form_description,
+                                                            'category':
+                                                                form_category,
+                                                            'image':
+                                                                'trail.jpg',
+                                                            'likes': 0,
+                                                            'flagged': 0,
+                                                            'date':
+                                                                DateTime.now(),
+                                                            'uid': _user.uid,
+                                                          });
+                                                          _formKey.currentState!
+                                                              .save();
+                                                        }
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                  )
                                                 ],
                                               ),
-                                            ));
-                                  },
-                                  icon: Icon(
-                                    size: 30,
-                                    Icons.note_add_outlined,
-                                    color: Colors.black,
-                                  ),
-                                )),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        FilterOptions,
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Wrap(
-                          runSpacing: 16.0,
-                          children: postInfos
-                              .where((post) =>
-                                  filter == '' || post.category == filter)
-                              .map((post) {
-                            return PostTemplate(
-                              date: post.date,
-                              name: post.name,
-                              title: post.title,
-                              description: post.description,
-                              category: post.category,
-                              image: post.image,
-                              likes: post.likes,
-                              flagged: post.flagged,
-                            );
-                          }).toList(),
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                      ]))
-                ]);
-          } else {
-            return SizedBox(height: 0);
-          }
+                                            ),
+                                          ],
+                                        ),
+                                      ));
+                            },
+                            icon: Icon(
+                              size: 30,
+                              Icons.note_add_outlined,
+                              color: Colors.black,
+                            ),
+                          )),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  FilterOptions,
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Wrap(
+                    runSpacing: 16.0,
+                    children: postInfos
+                        .where(
+                            (post) => filter == '' || post.category == filter)
+                        .map((post) {
+                      return PostTemplate(
+                        date: post.date,
+                        name: post.name,
+                        title: post.title,
+                        description: post.description,
+                        category: post.category,
+                        image: post.image,
+                        likes: post.likes,
+                        flagged: post.flagged,
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                ]))
+          ]);
         });
   }
 }

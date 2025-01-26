@@ -58,7 +58,7 @@ class DatabaseService {
     String category,
     String image,
     int likes,
-    bool flagged,
+    int flagged,
     DateTime date,
     String uid,
   ) async {
@@ -76,7 +76,7 @@ class DatabaseService {
   }
 
   Future<void> updatePostsData(
-      {bool addLike = false, bool flagged = false}) async {
+      {bool addLike = false, bool addFlagged = false}) async {
     List<dynamic> postInfo = await getPost();
     Post post = postInfo[0];
     String docId = postInfo[1];
@@ -89,7 +89,7 @@ class DatabaseService {
       'category': post.category,
       'image': post.image,
       'likes': addLike ? post.likes + 1 : post.likes,
-      'flagged': flagged,
+      'flagged': addFlagged ? post.flagged + 1 : post.flagged,
       'uid': post.uid,
     });
   }
@@ -105,12 +105,11 @@ class DatabaseService {
     if (filter != '') {
       snapShots = postsCollection
           .where('category', isEqualTo: filter)
-          .where('flagged', isEqualTo: false)
+          .where('flagged', isLessThan: 3)
           .orderBy('date', descending: false)
           .snapshots();
     } else {
-      snapShots =
-          postsCollection.where('flagged', isEqualTo: false).snapshots();
+      snapShots = postsCollection.where('flagged', isLessThan: 3).snapshots();
     }
 
     return snapShots.map((snapshot) {
@@ -131,12 +130,12 @@ class DatabaseService {
     if (filter != '') {
       querySnapshot = await postsCollection
           .where('category', isEqualTo: filter)
-          .where('flagged', isEqualTo: false)
+          .where('flagged', isLessThan: 3)
           .orderBy('date', descending: false)
           .get();
     } else {
       querySnapshot =
-          await postsCollection.where('flagged', isEqualTo: false).get();
+          await postsCollection.where('flagged', isLessThan: 3).get();
     }
 
     if (querySnapshot.docs.isNotEmpty) {

@@ -7,7 +7,7 @@ class Post {
   String category;
   String image;
   int likes;
-  bool flagged;
+  int flagged;
   final DateTime date;
   String uid;
 
@@ -18,7 +18,7 @@ class Post {
     this.category = '',
     this.image = '',
     this.likes = 0,
-    this.flagged = false,
+    this.flagged = 0,
     required this.date,
     this.uid = '',
   });
@@ -30,7 +30,7 @@ class Post {
         category = data['category'] ?? '',
         image = data['image'] ?? '',
         likes = data['likes'] ?? 0,
-        flagged = data['flagged'] ?? false,
+        flagged = data['flagged'] ?? 0,
         date = (data['date'] as Timestamp).toDate(),
         uid = data['uid'] ?? '';
 
@@ -43,7 +43,7 @@ class Post {
       'likes': likes,
       'flagged': flagged,
       'date': date,
-      'uid': uid,
+      'uid': uid
     };
   }
 }
