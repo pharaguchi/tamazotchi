@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tamazotchi/models/user.dart'; // Import User model
+import 'package:tamazotchi/models/user.dart'; // User model
+import 'package:tamazotchi/services/database.dart'; // Import DatabaseService
 
 class FriendsPage extends StatefulWidget {
   final User user;
@@ -11,38 +12,97 @@ class FriendsPage extends StatefulWidget {
 }
 
 class _FriendsPageState extends State<FriendsPage> {
+  late DatabaseService _databaseService;
+  final TextEditingController _friendCodeController = TextEditingController(); // Controller for the input field
+
+  @override
+  void initState() {
+    super.initState();
+    _databaseService = DatabaseService(uid: widget.user.uid);
+  }
 
   // Function to send a friend request
-  void _sendFriendRequest(String friendId) {
-    setState(() {
-      widget.user.sentRequests.add(friendId); // Add to sent requests
-    });
-    // Call to backend here to update the sentRequests field
+  void _sendFriendRequest() async {
+    final friendCode = _friendCodeController.text.trim();
+
+    if (friendCode.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Please enter a valid friend code.'),
+        backgroundColor: Colors.red,
+      ));
+      return;
+    }
+
+    try {
+      await _databaseService.sendFriendRequest(friendCode);
+      setState(() {
+        widget.user.sentRequests.add(friendCode);
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Friend request sent to $friendCode'),
+        backgroundColor: Colors.green,
+      ));
+
+      _friendCodeController.clear(); // Clear the input field after sending the request
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: ${e.toString()}'),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   // Function to accept a friend request
-  void _acceptFriendRequest(String friendId) {
-    setState(() {
-      widget.user.receivedRequests.remove(friendId); // Remove from received
-      widget.user.friends.add(friendId); // Add to friends
-    });
-    // Call to backend here to update receivedRequests and friends fields
+  void _acceptFriendRequest(String senderUid) async {
+    try {
+      await _databaseService.acceptFriendRequest(senderUid);
+      setState(() {
+        widget.user.friends.add(senderUid);
+        widget.user.receivedRequests.remove(senderUid);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Friend request accepted from $senderUid'),
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: ${e.toString()}'),
+      ));
+    }
   }
 
-  // Function to reject a friend request
-  void _rejectFriendRequest(String friendId) {
-    setState(() {
-      widget.user.receivedRequests.remove(friendId); // Remove from received
-    });
-    // Call to backend here to update receivedRequests
+  // Function to decline a friend request
+  void _declineFriendRequest(String senderUid) async {
+    try {
+      await _databaseService.declineFriendRequest(senderUid);
+      setState(() {
+        widget.user.receivedRequests.remove(senderUid);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Friend request declined from $senderUid'),
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: ${e.toString()}'),
+      ));
+    }
   }
 
   // Function to remove a friend
-  void _removeFriend(String friendId) {
-    setState(() {
-      widget.user.friends.remove(friendId); // Remove from friends
-    });
-    // Call to backend here to update friends field
+  void _removeFriend(String friendUid) async {
+    try {
+      await _databaseService.removeFriend(friendUid);
+      setState(() {
+        widget.user.friends.remove(friendUid);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Unfriended $friendUid'),
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: ${e.toString()}'),
+      ));
+    }
   }
 
   @override
@@ -60,6 +120,47 @@ class _FriendsPageState extends State<FriendsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Display the user's personal code (UID)
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.blue[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.account_circle, color: Colors.blue),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Your Friend ID: ${widget.user.friendId}', 
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+
+            // Friend request input field
+            TextField(
+              controller: _friendCodeController,
+              decoration: InputDecoration(
+                labelText: 'Enter Friend\'s Friend ID',
+                hintText: 'Friend\'s Friend ID',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 10),
+
+            // Send friend request button
+            ElevatedButton(
+              onPressed: _sendFriendRequest,
+              child: Text('Send Friend Request'),
+            ),
+            SizedBox(height: 20),
+
             // Display Pending Friend Requests
             if (receivedRequests.isNotEmpty) ...[
               Text(
@@ -83,7 +184,7 @@ class _FriendsPageState extends State<FriendsPage> {
                           ),
                           IconButton(
                             icon: Icon(Icons.close, color: Colors.red),
-                            onPressed: () => _rejectFriendRequest(friendId),
+                            onPressed: () => _declineFriendRequest(friendId),
                           ),
                         ],
                       ),
@@ -108,12 +209,14 @@ class _FriendsPageState extends State<FriendsPage> {
                       title: Text(friendId),
                       trailing: IconButton(
                         icon: Icon(Icons.cancel, color: Colors.orange),
-                        onPressed: () {
-                          // Cancel sent friend request (for example)
+                        onPressed: () async {
+                          await _databaseService.cancelFriendRequest(friendId);
                           setState(() {
                             widget.user.sentRequests.remove(friendId);
                           });
-                          // Call backend to remove sent request
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Canceled friend request to $friendId'),
+                          ));
                         },
                       ),
                     );

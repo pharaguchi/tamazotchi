@@ -95,28 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             GestureDetector(
-              onTap: _navigateToFriends, // Navigate to Friends
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16, right: 16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.perm_contact_calendar_rounded,
-                      size: 70,
-                      color: Colors.blue,
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Friends',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            GestureDetector(
               onTap: _navigateToBadges, // Navigate to Badges
               child: Padding(
                 padding: const EdgeInsets.only(top: 16, right: 16),
