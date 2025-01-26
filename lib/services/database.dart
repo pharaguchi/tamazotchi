@@ -24,16 +24,16 @@ class DatabaseService {
     required String tamagotchi,
     required bool isCompany,
     required String friendId,
-    int percentCarbonEmissionsReduced = 0,
-    int percentSustainableMaterials = 0,
-    int numGreenPartnerships = 0,
-    int energyCostSavings = 0,
-    int employeeVolunteerHours = 0,
-    int miles = 0,
-    int itemsRecycledOrComposted = 0,
-    int numEcoFriendlyItems = 0,
-    int ounces = 0,
-    int hoursVolunteered = 0,
+    int? percentCarbonEmissionsReduced,
+    int? percentSustainableMaterials,
+    int? numGreenPartnerships,
+    int? energyCostSavings,
+    int? employeeVolunteerHours,
+    int? miles,
+    int? itemsRecycledOrComposted,
+    int? numEcoFriendlyItems,
+    int? ounces,
+    int? hoursVolunteered,
     List<String>? posts,
     List<String>? likedPosts,
     List<String>? reportedPosts,
@@ -48,16 +48,16 @@ class DatabaseService {
       'tamagotchi': tamagotchi,
       'isCompany': isCompany,
       'friendId': friendId,
-      'percentCarbonEmissionsReduced': percentCarbonEmissionsReduced,
-      'percentSustainableMaterials': percentSustainableMaterials,
-      'numGreenPartnerships': numGreenPartnerships,
-      'energyCostSavings': energyCostSavings,
-      'employeeVolunteerHours': employeeVolunteerHours,
-      'miles': miles,
-      'itemsRecycledOrComposted': itemsRecycledOrComposted,
-      'numEcoFriendlyItems': numEcoFriendlyItems,
-      'ounces': ounces,
-      'hoursVolunteered': hoursVolunteered,
+      'percentCarbonEmissionsReduced': percentCarbonEmissionsReduced ?? 0,
+      'percentSustainableMaterials': percentSustainableMaterials ?? 0,
+      'numGreenPartnerships': numGreenPartnerships ?? 0,
+      'energyCostSavings': energyCostSavings ?? 0,
+      'employeeVolunteerHours': employeeVolunteerHours ?? 0,
+      'miles': miles ?? 0,
+      'itemsRecycledOrComposted': itemsRecycledOrComposted ?? 0,
+      'numEcoFriendlyItems': numEcoFriendlyItems ?? 0,
+      'ounces': ounces ?? 0,
+      'hoursVolunteered': hoursVolunteered ?? 0,
       'posts': posts ?? [],
       'likedPosts': likedPosts ?? [],
       'reportedPosts': reportedPosts ?? [],
@@ -227,8 +227,8 @@ class DatabaseService {
   setFilter(String filter) async {
     this.filter = filter;
   }
-    
-    Stream<List<User>> get leaderboard {
+
+  Stream<List<User>> get leaderboard {
     return userCollection
         .orderBy('points', descending: true)
         .snapshots()
