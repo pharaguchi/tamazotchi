@@ -26,6 +26,7 @@ class _FeedScreenState extends State<FeedScreen> {
   late Function setNavBarIdx;
   String filter = '';
   late final DatabaseService databaseService;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   setFilter(filterName) {
     setState(() {
@@ -273,26 +274,165 @@ class _FeedScreenState extends State<FeedScreen> {
                                   )),
                             ),
                             Align(
-                              alignment: Alignment.centerRight,
-                              child: IconButton(
-                                onPressed: () async => {
-                                  await DatabaseService().createPost(
-                                      _user.name,
-                                      'Title',
-                                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                                      'Reusable Waterbottle', //'Category',
-                                      '',
-                                      0,
-                                      false,
-                                      DateTime.now()),
-                                },
-                                icon: Icon(
-                                  size: 30,
-                                  Icons.note_add_outlined,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
+                                alignment: Alignment.centerRight,
+                                child: IconButton(
+                                  onPressed: () async {
+                                    await showDialog<void>(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                              content: Stack(
+                                                clipBehavior: Clip.none,
+                                                children: <Widget>[
+                                                  Positioned(
+                                                    right: -40,
+                                                    top: -40,
+                                                    child: InkResponse(
+                                                      onTap: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: const CircleAvatar(
+                                                        child:
+                                                            Icon(Icons.close),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Form(
+                                                    key: _formKey,
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: <Widget>[
+                                                        Text("Create a post!",
+                                                            style: TextStyle(
+                                                                fontSize: 20)),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          child: TextFormField(
+                                                            decoration:
+                                                                InputDecoration(
+                                                              hintText: 'Title',
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          child: TextFormField(
+                                                            maxLines: 5,
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .multiline,
+                                                            scrollPhysics:
+                                                                BouncingScrollPhysics(),
+                                                            decoration:
+                                                                InputDecoration(
+                                                              hintText:
+                                                                  'Description',
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          child: TextFormField(
+                                                            decoration:
+                                                                InputDecoration(
+                                                              hintText:
+                                                                  'Image URL',
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          child:
+                                                              DropdownButtonFormField<
+                                                                  String>(
+                                                            decoration:
+                                                                InputDecoration(
+                                                              hintText:
+                                                                  'Category',
+                                                            ),
+                                                            items: [
+                                                              DropdownMenuItem(
+                                                                value:
+                                                                    'Sustainable Transportation',
+                                                                child: Text(
+                                                                    'Sustainable Transportation'),
+                                                              ),
+                                                              DropdownMenuItem(
+                                                                value:
+                                                                    'Reusable Waterbottle',
+                                                                child: Text(
+                                                                    'Reusable Waterbottle'),
+                                                              ),
+                                                              DropdownMenuItem(
+                                                                value:
+                                                                    'Energy Conservation',
+                                                                child: Text(
+                                                                    'Energy Conservation'),
+                                                              ),
+                                                              DropdownMenuItem(
+                                                                value:
+                                                                    'Waste Reduction',
+                                                                child: Text(
+                                                                    'Waste Reduction'),
+                                                              ),
+                                                              DropdownMenuItem(
+                                                                value:
+                                                                    'Conscious Conservation',
+                                                                child: Text(
+                                                                    'Conscious Conservation'),
+                                                              ),
+                                                              DropdownMenuItem(
+                                                                value:
+                                                                    'Community Engagement',
+                                                                child: Text(
+                                                                    'Community Engagement'),
+                                                              ),
+                                                            ],
+                                                            onChanged: (value) {
+                                                              // Handle change
+                                                            },
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          child: ElevatedButton(
+                                                            child: const Text(
+                                                                'Submit'),
+                                                            onPressed: () {
+                                                              if (_formKey
+                                                                  .currentState!
+                                                                  .validate()) {
+                                                                _formKey
+                                                                    .currentState!
+                                                                    .save();
+                                                              }
+                                                            },
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ));
+                                  },
+                                  icon: Icon(
+                                    size: 30,
+                                    Icons.note_add_outlined,
+                                    color: Colors.black,
+                                  ),
+                                )),
                           ],
                         ),
                         SizedBox(
