@@ -197,8 +197,29 @@ class _BadgePageState extends State<BadgePage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Display the badge image dynamically based on the user's progress
-                  Flexible(child: Image.asset(badgeImage, fit: BoxFit.cover)),
+                  // Container with rounded corners and shadow effect
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.0), // Rounded corners
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 8,
+                          offset: Offset(0, 4), // Shadow position
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16.0), // Apply rounded corners
+                      child: Image.asset(
+                        badgeImage,
+                        fit: BoxFit.cover,
+                        height: 200, // Fixed height to keep images consistent
+                        width: 200, // Full width for the image
+                      ),
+                    ),
+                  ),
                   SizedBox(height: 8),
                   Text(
                     badges[index]['title'],
@@ -214,3 +235,6 @@ class _BadgePageState extends State<BadgePage> {
     );
   }
 }
+
+
+
