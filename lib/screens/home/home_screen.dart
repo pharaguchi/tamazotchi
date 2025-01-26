@@ -33,12 +33,16 @@ class _HomeScreenState extends State<HomeScreen> {
   // Method to navigate to the BadgePage
   void _navigateToBadges() {
     // Optionally update the navigation bar index (if needed)
-    setNavBarIdx(1); // You can adjust the index to the BadgePage index in your navigation bar
+    setNavBarIdx(
+        1); // You can adjust the index to the BadgePage index in your navigation bar
 
     // Navigate to the BadgePage
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => BadgePage()), // Ensure BadgePage exists or is imported
+      MaterialPageRoute(
+          builder: (context) => BadgePage(
+                user: _user,
+              )), // Ensure BadgePage exists or is imported
     );
   }
 
@@ -47,75 +51,86 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         // The rest of the content in the column, centered
-        SizedBox(height: 60), // Add some space to push the rest of the content down
+        SizedBox(
+            height: 60), // Add some space to push the rest of the content down
         Center(
           child: Text(
-            'Hi ${_user.name}! I missed you <3',  // Main text/content
+            'Hi ${_user.name}! I missed you <3', // Main text/content
             style: TextStyle(fontSize: 24),
           ),
         ),
         // Align the entire widget (icon + text) to the top-right corner
-        Row (
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             GestureDetector(
-            onTap: _navigateToBadges,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16, left: 16),  // Padding from top and right
-              child: Column(
-                mainAxisSize: MainAxisSize.min,  // The column only takes as much space as needed
-                crossAxisAlignment: CrossAxisAlignment.center,  // Center icon and text horizontally
-                children: [
-                  Icon(
-                    Icons.chat_outlined,
-                    size: 70,  // Size of the badge icon
-                    color: Colors.blue,  // Icon color
-                  ),
-                  SizedBox(height: 8),  // Space between the icon and the text
-                  Text(
-                    'My Posts',  // Text displayed under the icon
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
+              onTap: _navigateToBadges,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    top: 16, left: 16), // Padding from top and right
+                child: Column(
+                  mainAxisSize: MainAxisSize
+                      .min, // The column only takes as much space as needed
+                  crossAxisAlignment: CrossAxisAlignment
+                      .center, // Center icon and text horizontally
+                  children: [
+                    Icon(
+                      Icons.chat_outlined,
+                      size: 70, // Size of the badge icon
+                      color: Colors.blue, // Icon color
+                    ),
+                    SizedBox(height: 8), // Space between the icon and the text
+                    Text(
+                      'My Posts', // Text displayed under the icon
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          GestureDetector(
-            onTap: _navigateToBadges,  // Navigate to BadgePage on tap
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16, right: 16),  // Padding from top and right
-              child: Column(
-                mainAxisSize: MainAxisSize.min,  // The column only takes as much space as needed
-                crossAxisAlignment: CrossAxisAlignment.center,  // Center icon and text horizontally
-                children: [
-                  Icon(
-                    Icons.badge_outlined,
-                    size: 70,  // Size of the badge icon
-                    color: Colors.blue,  // Icon color
-                  ),
-                  SizedBox(height: 8),  // Space between the icon and the text
-                  Text(
-                    'My Badges',  // Text displayed under the icon
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
+            GestureDetector(
+              onTap: _navigateToBadges, // Navigate to BadgePage on tap
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    top: 16, right: 16), // Padding from top and right
+                child: Column(
+                  mainAxisSize: MainAxisSize
+                      .min, // The column only takes as much space as needed
+                  crossAxisAlignment: CrossAxisAlignment
+                      .center, // Center icon and text horizontally
+                  children: [
+                    Icon(
+                      Icons.badge_outlined,
+                      size: 70, // Size of the badge icon
+                      color: Colors.blue, // Icon color
+                    ),
+                    SizedBox(height: 8), // Space between the icon and the text
+                    Text(
+                      'My Badges', // Text displayed under the icon
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
           ],
         ),
-        SizedBox(height: MediaQuery.of(context).size.width * 0.1,),
-        Image (
-          image: AssetImage('assets/${getTamagotchiImageLink(_user.tamagotchi)}'),
+        SizedBox(
+          height: MediaQuery.of(context).size.width * 0.1,
+        ),
+        Image(
+          image:
+              AssetImage('assets/${getTamagotchiImageLink(_user.tamagotchi)}'),
           fit: BoxFit.contain,
           width: MediaQuery.of(context).size.width * 0.6,
           height: MediaQuery.of(context).size.width * 0.7,
         ),
-        SizedBox(height: MediaQuery.of(context).size.width * 0.1,),
+        SizedBox(
+          height: MediaQuery.of(context).size.width * 0.1,
+        ),
       ],
     );
-}
-
+  }
 }
 
 //   @override
