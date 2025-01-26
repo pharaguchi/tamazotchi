@@ -13,12 +13,53 @@ class FriendsPage extends StatefulWidget {
 
 class _FriendsPageState extends State<FriendsPage> {
   late DatabaseService _databaseService;
-  final TextEditingController _friendCodeController = TextEditingController(); // Controller for the input field
+  final TextEditingController _friendCodeController =
+      TextEditingController(); // Controller for the input field
+  final Map<String, String> _usernameCache = {}; // Cache for usernames
 
   @override
   void initState() {
     super.initState();
     _databaseService = DatabaseService(uid: widget.user.uid);
+  }
+
+  // Fetch username based on friendId
+  Future<String> _fetchUsernameFromFriendId(String friendId) async {
+    if (_usernameCache.containsKey(friendId)) {
+      return _usernameCache[friendId]!;
+    }
+    try {
+      final username =
+          await _databaseService.getUsernameFromFriendCode(friendId);
+      setState(() {
+        _usernameCache[friendId] = username;
+      });
+      return username;
+    } catch (e) {
+      return 'Unknown User';
+    }
+  }
+
+  // Fetch username based on UUID
+  Future<String> _fetchUsernameFromUUID(String uuid) async {
+    if (_usernameCache.containsKey(uuid)) {
+      return _usernameCache[uuid]!;
+    }
+    try {
+      final snapshot = await _databaseService.userCollection.doc(uuid).get();
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        final username = data['name'] ?? data['friendId'] ?? 'Unknown User';
+        setState(() {
+          _usernameCache[uuid] = username;
+        });
+        return username;
+      } else {
+        return 'Unknown User';
+      }
+    } catch (e) {
+      return 'Unknown User';
+    }
   }
 
   // Function to send a friend request
@@ -44,7 +85,8 @@ class _FriendsPageState extends State<FriendsPage> {
         backgroundColor: Colors.green,
       ));
 
-      _friendCodeController.clear(); // Clear the input field after sending the request
+      _friendCodeController
+          .clear(); // Clear the input field after sending the request
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${e.toString()}'),
@@ -107,9 +149,10 @@ class _FriendsPageState extends State<FriendsPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> friends = widget.user.friends;
-    List<String> sentRequests = widget.user.sentRequests;
-    List<String> receivedRequests = widget.user.receivedRequests;
+    List<String> friends = widget.user.friends; // List of UUIDs
+    List<String> sentRequests = widget.user.sentRequests; // List of friendIds
+    List<String> receivedRequests =
+        widget.user.receivedRequests; // List of UUIDs
 
     return Scaffold(
       appBar: AppBar(
@@ -133,8 +176,9 @@ class _FriendsPageState extends State<FriendsPage> {
                   SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Your Friend ID: ${widget.user.friendId}', 
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      'Your Friend ID: ${widget.user.friendId}',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -172,27 +216,34 @@ class _FriendsPageState extends State<FriendsPage> {
                 child: ListView.builder(
                   itemCount: receivedRequests.length,
                   itemBuilder: (context, index) {
-                    String friendId = receivedRequests[index];
-                    return ListTile(
-                      title: Text(friendId), // Display friendId (you may want to show the name instead)
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.check, color: Colors.green),
-                            onPressed: () => _acceptFriendRequest(friendId),
+                    String uuid = receivedRequests[index];
+                    return FutureBuilder<String>(
+                      future: _fetchUsernameFromUUID(uuid),
+                      builder: (context, snapshot) {
+                        final username = snapshot.data ?? 'Loading...';
+                        return ListTile(
+                          title: Text(username), // Display username or fallback
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.check, color: Colors.green),
+                                onPressed: () => _acceptFriendRequest(uuid),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.close, color: Colors.red),
+                                onPressed: () => _declineFriendRequest(uuid),
+                              ),
+                            ],
                           ),
-                          IconButton(
-                            icon: Icon(Icons.close, color: Colors.red),
-                            onPressed: () => _declineFriendRequest(friendId),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     );
                   },
                 ),
               ),
             ],
+
             // Display Sent Friend Requests
             if (sentRequests.isNotEmpty) ...[
               Text(
@@ -205,25 +256,35 @@ class _FriendsPageState extends State<FriendsPage> {
                   itemCount: sentRequests.length,
                   itemBuilder: (context, index) {
                     String friendId = sentRequests[index];
-                    return ListTile(
-                      title: Text(friendId),
-                      trailing: IconButton(
-                        icon: Icon(Icons.cancel, color: Colors.orange),
-                        onPressed: () async {
-                          await _databaseService.cancelFriendRequest(friendId);
-                          setState(() {
-                            widget.user.sentRequests.remove(friendId);
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Canceled friend request to $friendId'),
-                          ));
-                        },
-                      ),
+                    return FutureBuilder<String>(
+                      future: _fetchUsernameFromFriendId(friendId),
+                      builder: (context, snapshot) {
+                        final username = snapshot.data ?? 'Loading...';
+                        return ListTile(
+                          title: Text(username), // Display username or friendId
+                          trailing: IconButton(
+                            icon: Icon(Icons.cancel, color: Colors.orange),
+                            onPressed: () async {
+                              await _databaseService
+                                  .cancelFriendRequest(friendId);
+                              setState(() {
+                                widget.user.sentRequests.remove(friendId);
+                              });
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text(
+                                    'Canceled friend request to $username'),
+                              ));
+                            },
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
               ),
             ],
+
             // Display Friends List
             if (friends.isNotEmpty) ...[
               Text(
@@ -235,20 +296,40 @@ class _FriendsPageState extends State<FriendsPage> {
                 child: ListView.builder(
                   itemCount: friends.length,
                   itemBuilder: (context, index) {
-                    String friendId = friends[index];
-                    return ListTile(
-                      title: Text(friendId), // Display friendId (you may want to show the name instead)
-                      trailing: IconButton(
-                        icon: Icon(Icons.remove_circle_outline, color: Colors.red),
-                        onPressed: () => _removeFriend(friendId),
-                      ),
+                    String uuid = friends[index];
+                    return FutureBuilder<String>(
+                      future: _fetchUsernameFromUUID(uuid),
+                      builder: (context, snapshot) {
+                        final username = snapshot.data ?? 'Loading...';
+                        return ListTile(
+                          title: Text(username), // Display username or fallback
+                          trailing: IconButton(
+                            icon: Icon(Icons.remove_circle_outline,
+                                color: Colors.red),
+                            onPressed: () async {
+                              await _databaseService.removeFriend(uuid);
+                              setState(() {
+                                widget.user.friends.remove(uuid);
+                              });
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content:
+                                    Text('Removed $username from friends.'),
+                              ));
+                            },
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
               ),
             ],
+
             // If no friends, requests, or sent requests
-            if (friends.isEmpty && sentRequests.isEmpty && receivedRequests.isEmpty)
+            if (friends.isEmpty &&
+                sentRequests.isEmpty &&
+                receivedRequests.isEmpty)
               Center(
                 child: Text("No friends or requests."),
               ),
