@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tamazotchi/models/user.dart';
 import 'package:tamazotchi/services/auth.dart';
 import 'package:tamazotchi/screens/home/badges.dart';
+import 'package:tamazotchi/screens/home/friends.dart';
 import 'package:tamazotchi/util.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,13 +33,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Method to navigate to the BadgePage
   void _navigateToBadges() {
-    // Optionally update the navigation bar index (if needed)
-    setNavBarIdx(1); // You can adjust the index to the BadgePage index in your navigation bar
-
     // Navigate to the BadgePage
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => BadgePage()), // Ensure BadgePage exists or is imported
+    );
+  }
+
+  // Method to navigate to the Friends Page
+  void _navigateToFriends() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => FriendsPage(user: _user)),
     );
   }
 
@@ -59,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             GestureDetector(
-            onTap: _navigateToBadges,
+            onTap: _navigateToFriends,
             child: Padding(
               padding: const EdgeInsets.only(top: 16, left: 16),  // Padding from top and right
               child: Column(
