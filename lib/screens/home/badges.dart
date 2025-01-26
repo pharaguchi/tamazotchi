@@ -1,119 +1,81 @@
-  import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:tamazotchi/screens/home/badgesDetail.dart';
 
-class BadgePage extends StatelessWidget {
-  // Sample data for badges
+class BadgePage extends StatefulWidget {
+  @override
+  _BadgePageState createState() => _BadgePageState();
+}
+
+class _BadgePageState extends State<BadgePage> {
+  // List of badges with milestone info
   final List<Map<String, dynamic>> badges = [
-    {'title': 'Sustainable Transportation', 'icon': Icons.directions_walk, 'description': 'Complete 10 walks with your pet.'},
-    {'title': 'Energy Conservation', 'icon': Icons.fastfood, 'description': 'Feed your pet 5 times a day.'},
-    {'title': 'Waste Reduction', 'icon': Icons.videogame_asset, 'description': 'Play games with your pet.'},
-    {'title': 'Conscious Conservation', 'icon': Icons.explore, 'description': 'Explore new places together.'},
-    {'title': 'Reusable Waterbottle', 'icon': Icons.group, 'description': 'Connect with other pet owners.'},
-    {'title': 'Community Engagment', 'icon': Icons.sentiment_very_satisfied, 'description': 'Complete happy tasks with your pet.'},
+    {
+      'title': 'Walking Badge',
+      'icon': Icons.directions_walk, // Icon for the badge
+      'description': 'Progress Check:',
+      'milestones': [
+        {'description': 'Walk 5 miles', 'goal': 5, 'progress': 5},
+        {'description': 'Walk 10 miles', 'goal': 10, 'progress': 10},
+        {'description': 'Walk 50 miles', 'goal': 50, 'progress': 13},
+      ]
+    },
+    {
+      'title': 'Running Badge',
+      'icon': Icons.directions_run, // Icon for running
+      'description': 'Progress Check:',
+      'milestones': [
+        {'description': 'Run 5 mile', 'goal': 5, 'progress': 5},
+        {'description': 'Run 10 miles', 'goal': 10, 'progress': 6},
+        {'description': 'Run 50 miles', 'goal': 50, 'progress': 6},
+      ]
+    },
+    // Add more badges as needed
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Badge Page'),
-        backgroundColor: Colors.pinkAccent,
-      ),
-      body: GridView.builder(
-        padding: const EdgeInsets.all(16),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // 2 badges per row
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-        ),
-        itemCount: badges.length,
-        itemBuilder: (context, index) {
-          var badge = badges[index];
-          return GestureDetector(
-            onTap: () {
-              // Navigate to the badge detail page (You can create a new page for badge details)
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BadgeDetailPage(
-                    title: badge['title'],
-                    description: badge['description'],
-                  ),
-                ),
-              );
-            },
-            child: Card(
-              color: Colors.pink[50],
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    badge['icon'],
-                    size: 50,
-                    color: Colors.pinkAccent,
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    badge['title'],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.pinkAccent,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+  // Navigate to detailed page for a specific badge
+  void _navigateToBadgeDetails(BuildContext context, int badgeIndex) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BadgeDetailsPage(badgeIndex: badgeIndex, badges: badges),
       ),
     );
   }
-}
-
-class BadgeDetailPage extends StatelessWidget {
-  final String title;
-  final String description;
-
-  BadgeDetailPage({required this.title, required this.description});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        backgroundColor: Colors.pinkAccent,
-      ),
+      appBar: AppBar(title: Text("Badges")),
       body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(
-              Icons.star,
-              size: 100,
-              color: Colors.pinkAccent,
-            ),
-            SizedBox(height: 16),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.pinkAccent,
+        padding: const EdgeInsets.all(16.0),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,  // 2 columns
+            crossAxisSpacing: 16,  // Space between columns
+            mainAxisSpacing: 16,   // Space between rows
+          ),
+          itemCount: badges.length,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () => _navigateToBadgeDetails(context, index),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    badges[index]['icon'],
+                    size: 80,  // Icon size
+                    color: Colors.blue,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    badges[index]['title'],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
               ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              description,
-              style: TextStyle(fontSize: 18),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
