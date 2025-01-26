@@ -13,12 +13,27 @@ class BadgeDetailsPage extends StatelessWidget {
     // Get the badge info based on the index
     final badge = badges[badgeIndex];  // Access the badge using the index
     final milestones = badge['milestones']; 
-    final badgeProgress = badge['milestones'].last['progress'];  // Last progress milestone
 
     // Calculate total miles completed by the user
-    int totalMiles = 0;
+    int totalMiles = milestones.last['progress'] as int;
+    // for (var milestone in milestones) {
+    //   totalMiles += milestone['progress'] as int;
+    // }
+    int completedMilestones = 0;
     for (var milestone in milestones) {
-      totalMiles += milestone['progress'] as int;
+      if (milestone['progress'] >= milestone['goal']) {
+        completedMilestones++;
+      }
+    }
+
+    // Determine which badge image to show
+    String badgeImage;
+    if (completedMilestones == 0) {
+      badgeImage = badge['questionImage'];  // Show question mark if no milestones completed
+    } else if (completedMilestones < milestones.length) {
+      badgeImage = badge['sketchImage'];  // Show sketch if some milestones are completed
+    } else {
+      badgeImage = badge['fullImage'];  // Show full badge if all milestones are completed
     }
 
     // Find the next milestone that hasn't been reached yet
@@ -52,11 +67,11 @@ class BadgeDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Badge icon
-            Icon(
-              badge['icon'],
-              size: 120,
-              color: Colors.blue,
+            // Display the appropriate badge icon based on progress
+            Image.asset(
+              badgeImage,
+              height: 120,
+              width: 120,
             ),
             SizedBox(height: 20),
 
