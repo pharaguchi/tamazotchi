@@ -57,7 +57,7 @@ class _HomeState extends State<Home> {
                       BottomNavigationBarItem(
                           icon: Icon(Icons.chat_bubble), label: 'Feed'),
                       BottomNavigationBarItem(
-                          icon: Icon(Icons.settings), label: 'Setting'),
+                          icon: Icon(Icons.settings), label: 'Settings'),
                       BottomNavigationBarItem(
                           icon: Icon(Icons.leaderboard), label: 'Leaderboard'),
                     ],
