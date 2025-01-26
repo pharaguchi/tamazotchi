@@ -83,20 +83,20 @@ class _FeedScreenState extends State<FeedScreen> {
           ),
         ),
         TextBubble(
-            childWidget: TextButton(
-              style: ButtonStyle(
-                padding: MaterialStateProperty.all(EdgeInsets.zero),
-                minimumSize: MaterialStateProperty.all(Size.zero),
-              ),
-              onPressed: () async => {
-                setFilter('Sustainable Transportation'),
-              },
-              child: Text(
-                'Sustainable Transportation',
-                style: TextStyle(fontSize: 12),
-              ),
+          childWidget: TextButton(
+            style: ButtonStyle(
+              padding: MaterialStateProperty.all(EdgeInsets.zero),
+              minimumSize: MaterialStateProperty.all(Size.zero),
             ),
-            containerColor: const Color.fromARGB(255, 165, 222, 170)),
+            onPressed: () async => {
+              setFilter('Sustainable Transportation'),
+            },
+            child: Text(
+              'Sustainable Transportation',
+              style: TextStyle(fontSize: 12),
+            ),
+          ),
+        ),
         TextBubble(
           childWidget: TextButton(
               style: ButtonStyle(
@@ -192,20 +192,20 @@ class _FeedScreenState extends State<FeedScreen> {
             ),
           ),
           TextBubble(
-              childWidget: TextButton(
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(EdgeInsets.zero),
-                  minimumSize: MaterialStateProperty.all(Size.zero),
-                ),
-                onPressed: () async => {
-                  setFeedType('Friend'),
-                },
-                child: Text(
-                  'Friends',
-                  style: TextStyle(fontSize: 12),
-                ),
+            childWidget: TextButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                minimumSize: MaterialStateProperty.all(Size.zero),
               ),
-              containerColor: const Color.fromARGB(255, 165, 222, 170)),
+              onPressed: () async => {
+                setFeedType('Friend'),
+              },
+              child: Text(
+                'Friends',
+                style: TextStyle(fontSize: 12),
+              ),
+            ),
+          ),
           TextBubble(
             childWidget: TextButton(
                 style: ButtonStyle(

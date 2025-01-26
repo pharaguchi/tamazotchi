@@ -44,9 +44,9 @@ class _HomeState extends State<Home> {
                 bottomNavigationBar: SafeArea(
                   child: BottomNavigationBar(
                     type: BottomNavigationBarType.fixed,
-                    backgroundColor: Colors.black,
-                    selectedItemColor: Colors.brown,
-                    unselectedItemColor: Colors.blue,
+                    backgroundColor: Color(0xFF393939),
+                    selectedItemColor: Color.fromARGB(255, 111, 209, 255),
+                    unselectedItemColor: Color(0xFFFFFFFF),
                     currentIndex: navBarIdx,
                     onTap: (int idx) {
                       setNavBarIdx(idx);

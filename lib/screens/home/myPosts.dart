@@ -155,6 +155,10 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
       children: categories.map((category) {
         return TextBubble(
           childWidget: TextButton(
+            style: ButtonStyle(
+              padding: MaterialStateProperty.all(EdgeInsets.zero),
+              minimumSize: MaterialStateProperty.all(Size.zero),
+            ),
             onPressed: () => _setFilter(category == 'All' ? '' : category),
             child: Text(category, style: TextStyle(fontSize: 12)),
           ),
@@ -220,7 +224,10 @@ class _UserPostsScreenState extends State<UserPostsScreen> {
                       : ListView.builder(
                           itemCount: userPosts.length,
                           itemBuilder: (context, index) {
-                            return _buildPostTemplate(userPosts[index]);
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: _buildPostTemplate(userPosts[index]),
+                            );
                           },
                         ),
                 ),
