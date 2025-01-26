@@ -5,6 +5,9 @@ import 'package:tamazotchi/services/auth.dart';
 import 'package:tamazotchi/services/database.dart';
 import 'package:tamazotchi/components/text_bubble.dart';
 import 'package:tamazotchi/models/post.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
+import 'dart:io';
 
 class FeedScreen extends StatefulWidget {
   FeedScreen({Key? key, required User user, required Function setNavBarIdx})
@@ -25,8 +28,13 @@ class _FeedScreenState extends State<FeedScreen> {
   late User _user;
   late Function setNavBarIdx;
   String filter = '';
+  String form_title = '';
+  String form_description = '';
+  String form_category = '';
   late final DatabaseService databaseService;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  XFile? _image;
+  final ImagePicker _picker = ImagePicker();
 
   setFilter(filterName) {
     setState(() {
@@ -189,7 +197,9 @@ class _FeedScreenState extends State<FeedScreen> {
           Center(
             child: RoundedRectangle(
               childWidget: SizedBox(
-                  child: Image.asset(image != '' ? image : 'trail.jpg')),
+                  child: image != ''
+                      ? Image.asset(image)
+                      : Image.asset('trail.jpg')),
             ),
           ),
           SizedBox(
@@ -244,6 +254,15 @@ class _FeedScreenState extends State<FeedScreen> {
       ),
       containerColor: const Color(0xFFD2C3B3),
     );
+  }
+
+  Future<void> _pickImage() async {
+    final XFile? pickedImage =
+        await _picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = pickedImage;
+    });
+    print(_image?.path);
   }
 
   @override
@@ -315,6 +334,12 @@ class _FeedScreenState extends State<FeedScreen> {
                                                                 InputDecoration(
                                                               hintText: 'Title',
                                                             ),
+                                                            onChanged: (value) {
+                                                              setState(() {
+                                                                form_title =
+                                                                    value;
+                                                              });
+                                                            },
                                                           ),
                                                         ),
                                                         Padding(
@@ -333,18 +358,12 @@ class _FeedScreenState extends State<FeedScreen> {
                                                               hintText:
                                                                   'Description',
                                                             ),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                          child: TextFormField(
-                                                            decoration:
-                                                                InputDecoration(
-                                                              hintText:
-                                                                  'Image URL',
-                                                            ),
+                                                            onChanged: (value) {
+                                                              setState(() {
+                                                                form_description =
+                                                                    value;
+                                                              });
+                                                            },
                                                           ),
                                                         ),
                                                         Padding(
@@ -360,6 +379,11 @@ class _FeedScreenState extends State<FeedScreen> {
                                                                   'Category',
                                                             ),
                                                             items: [
+                                                              DropdownMenuItem(
+                                                                value: '',
+                                                                child:
+                                                                    Text('All'),
+                                                              ),
                                                               DropdownMenuItem(
                                                                 value:
                                                                     'Sustainable Transportation',
@@ -398,8 +422,28 @@ class _FeedScreenState extends State<FeedScreen> {
                                                               ),
                                                             ],
                                                             onChanged: (value) {
-                                                              // Handle change
+                                                              setState(() {
+                                                                form_category =
+                                                                    value!;
+                                                              });
                                                             },
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              TextButton(
+                                                                  onPressed:
+                                                                      _pickImage,
+                                                                  child: Text(
+                                                                      'Upload Image'))
+                                                            ],
                                                           ),
                                                         ),
                                                         Padding(
@@ -409,14 +453,38 @@ class _FeedScreenState extends State<FeedScreen> {
                                                           child: ElevatedButton(
                                                             child: const Text(
                                                                 'Submit'),
-                                                            onPressed: () {
+                                                            onPressed:
+                                                                () async {
                                                               if (_formKey
                                                                   .currentState!
                                                                   .validate()) {
+                                                                await DatabaseService()
+                                                                    .postsCollection
+                                                                    .add({
+                                                                  'name': _user
+                                                                      .name,
+                                                                  'title':
+                                                                      form_title,
+                                                                  'description':
+                                                                      form_description,
+                                                                  'category':
+                                                                      form_category,
+                                                                  'image':
+                                                                      'trail.jpg',
+                                                                  'likes': 0,
+                                                                  'flagged':
+                                                                      false,
+                                                                  'date':
+                                                                      DateTime
+                                                                          .now(),
+                                                                });
                                                                 _formKey
                                                                     .currentState!
                                                                     .save();
                                                               }
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
                                                             },
                                                           ),
                                                         )
