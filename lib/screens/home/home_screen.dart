@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: 8),  // Space between the icon and the text
                   Text(
-                    'My Badges',  // Text displayed under the icon
+                    'My Friends',  // Text displayed under the icon
                     style: TextStyle(fontSize: 16),
                   ),
                 ],
