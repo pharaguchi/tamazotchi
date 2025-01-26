@@ -107,6 +107,30 @@ class DatabaseService {
     });
   }
 
+  Future<String> getUsernameFromFriendCode(String friendCode) async {
+    try {
+      // Query the user collection for a document with the specified friend code
+      QuerySnapshot snapshot = await userCollection
+          .where('friendId', isEqualTo: friendCode)
+          .limit(1)
+          .get();
+
+      // Check if a matching document exists
+      if (snapshot.docs.isNotEmpty) {
+        // Extract the username from the first document
+        Map<String, dynamic> data =
+            snapshot.docs.first.data() as Map<String, dynamic>;
+        return data['name'] ?? 'Unknown User';
+      } else {
+        throw Exception('No user found with this friend code.');
+      }
+    } catch (e) {
+      // Handle errors (e.g., network issues, permission errors)
+      print('Error fetching username: $e');
+      throw Exception('Failed to get username from friend code.');
+    }
+  }
+
   Future<void> toggleIsCompany() async {
     DocumentSnapshot snapshot = await userCollection.doc(uid).get();
     bool currentStatus = snapshot['isCompany'] ?? false;
