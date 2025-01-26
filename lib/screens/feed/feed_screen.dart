@@ -8,6 +8,7 @@ import 'package:tamazotchi/models/post.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/services.dart';
 
 class FeedScreen extends StatefulWidget {
   FeedScreen({Key? key, required User user, required Function setNavBarIdx})
@@ -31,6 +32,7 @@ class _FeedScreenState extends State<FeedScreen> {
   String form_title = '';
   String form_description = '';
   String form_category = '';
+  String form_numeric_value = '';
   late final DatabaseService databaseService;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   XFile? _image;
@@ -259,7 +261,6 @@ class _FeedScreenState extends State<FeedScreen> {
     setState(() {
       _image = pickedImage;
     });
-    print(_image?.path);
   }
 
   @override
@@ -416,6 +417,36 @@ class _FeedScreenState extends State<FeedScreen> {
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.all(8),
+                                                    child: Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: TextFormField(
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .number,
+                                                            inputFormatters: [
+                                                              FilteringTextInputFormatter
+                                                                  .digitsOnly,
+                                                            ],
+                                                            decoration:
+                                                                InputDecoration(
+                                                              hintText:
+                                                                  'Progress towards goal',
+                                                            ),
+                                                            onChanged: (value) {
+                                                              setState(() {
+                                                                form_numeric_value =
+                                                                    value;
+                                                              });
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
                                                     child: Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
@@ -456,6 +487,73 @@ class _FeedScreenState extends State<FeedScreen> {
                                                                 DateTime.now(),
                                                             'uid': _user.uid,
                                                           });
+                                                          if (form_category ==
+                                                              'Sustainable Transportation') {
+                                                            _user.miles +=
+                                                                int.parse(
+                                                                    form_numeric_value);
+                                                          } else if (form_category ==
+                                                              'Reusable Waterbottle') {
+                                                            _user.ounces +=
+                                                                int.parse(
+                                                                    form_numeric_value);
+                                                          } else if (form_category ==
+                                                              'Energy Conservation') {
+                                                            _user.energyCostSavings +=
+                                                                int.parse(
+                                                                    form_numeric_value);
+                                                          } else if (form_category ==
+                                                              'Waste Reduction') {
+                                                            _user.itemsRecycledOrComposted +=
+                                                                int.parse(
+                                                                    form_numeric_value);
+                                                          } else if (form_category ==
+                                                              'Conscious Conservation') {
+                                                            _user.energyCostSavings +=
+                                                                int.parse(
+                                                                    form_numeric_value);
+                                                          } else if (form_category ==
+                                                              'Community Engagement') {
+                                                            _user.hoursVolunteered +=
+                                                                int.parse(
+                                                                    form_numeric_value);
+                                                          }
+
+                                                          await DatabaseService(
+                                                            uid: _user.uid,
+                                                          ).updateUserData(
+                                                            name: _user.name,
+                                                            email: _user.email,
+                                                            points:
+                                                                _user.points,
+                                                            tamagotchi: _user
+                                                                .tamagotchi,
+                                                            isCompany:
+                                                                _user.isCompany,
+                                                            friendId:
+                                                                _user.friendId,
+                                                            miles: _user.miles,
+                                                            ounces:
+                                                                _user.ounces,
+                                                            energyCostSavings: _user
+                                                                .energyCostSavings,
+                                                            itemsRecycledOrComposted:
+                                                                _user
+                                                                    .itemsRecycledOrComposted,
+                                                            hoursVolunteered: _user
+                                                                .hoursVolunteered,
+                                                            posts: _user.posts,
+                                                            likedPosts: _user
+                                                                .likedPosts,
+                                                            reportedPosts: _user
+                                                                .reportedPosts,
+                                                            friends:
+                                                                _user.friends,
+                                                            sentRequests: _user
+                                                                .sentRequests,
+                                                            receivedRequests: _user
+                                                                .receivedRequests,
+                                                          );
                                                           _formKey.currentState!
                                                               .save();
                                                         }
