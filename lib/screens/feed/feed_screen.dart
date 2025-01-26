@@ -14,6 +14,7 @@ class FeedScreen extends StatefulWidget {
 
   final User _user;
   final Function setNavBarIdx;
+  String filter = '';
 
   @override
   State<FeedScreen> createState() => _FeedScreenState();
@@ -23,7 +24,14 @@ class _FeedScreenState extends State<FeedScreen> {
   final AuthService _auth = AuthService();
   late User _user;
   late Function setNavBarIdx;
+  String filter = '';
   late final DatabaseService databaseService;
+
+  setFilter(filterName) {
+    setState(() {
+      filter = filterName;
+    });
+  }
 
   @override
   void initState() {
@@ -38,44 +46,106 @@ class _FeedScreenState extends State<FeedScreen> {
 
   Widget get FilterOptions {
     return Wrap(
-      spacing: 8.0,
+      spacing: 4.0,
       runSpacing: 8.0,
       children: [
         TextBubble(
-            childWidget: Text(
-              'Sustainable Transportation',
+          childWidget: TextButton(
+            style: ButtonStyle(
+              padding: MaterialStateProperty.all(EdgeInsets.zero),
+              minimumSize: MaterialStateProperty.all(Size.zero),
+            ),
+            onPressed: () async => {
+              setFilter(''),
+            },
+            child: Text(
+              'All',
               style: TextStyle(fontSize: 12),
+            ),
+          ),
+        ),
+        TextBubble(
+            childWidget: TextButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                minimumSize: MaterialStateProperty.all(Size.zero),
+              ),
+              onPressed: () async => {
+                setFilter('Sustainable Transportation'),
+              },
+              child: Text(
+                'Sustainable Transportation',
+                style: TextStyle(fontSize: 12),
+              ),
             ),
             containerColor: const Color.fromARGB(255, 165, 222, 170)),
         TextBubble(
-          childWidget: Text(
-            'Reusable Waterbottle',
-            style: TextStyle(fontSize: 12),
+          childWidget: TextButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                minimumSize: MaterialStateProperty.all(Size.zero),
+              ),
+              onPressed: () async => {
+                    setFilter('Reusable Waterbottle'),
+                  },
+              child: Text(
+                'Reusable Waterbottle',
+                style: TextStyle(fontSize: 12),
+              )),
+        ),
+        TextBubble(
+          childWidget: TextButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                minimumSize: MaterialStateProperty.all(Size.zero),
+              ),
+              onPressed: () async => {
+                    setFilter('Energy Conservation'),
+                  },
+              child: Text(
+                'Energy Conservation',
+                style: TextStyle(fontSize: 12),
+              )),
+        ),
+        TextBubble(
+          childWidget: TextButton(
+            style: ButtonStyle(
+              padding: MaterialStateProperty.all(EdgeInsets.zero),
+              minimumSize: MaterialStateProperty.all(Size.zero),
+            ),
+            onPressed: () async => {
+              setFilter('Waste Reduction'),
+            },
+            child: Text('Waste Reduction', style: TextStyle(fontSize: 12)),
           ),
         ),
         TextBubble(
-          childWidget: Text(
-            'Energy Conservation',
-            style: TextStyle(fontSize: 12),
-          ),
+          childWidget: TextButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                minimumSize: MaterialStateProperty.all(Size.zero),
+              ),
+              onPressed: () async => {
+                    setFilter('Conscious Conservation'),
+                  },
+              child: Text(
+                'Conscious Conservation',
+                style: TextStyle(fontSize: 12),
+              )),
         ),
         TextBubble(
-          childWidget: Text(
-            'Waste Reduction',
-            style: TextStyle(fontSize: 12),
-          ),
-        ),
-        TextBubble(
-          childWidget: Text(
-            'Conscious Conservation',
-            style: TextStyle(fontSize: 12),
-          ),
-        ),
-        TextBubble(
-          childWidget: Text(
-            'Community Engagement',
-            style: TextStyle(fontSize: 12),
-          ),
+          childWidget: TextButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                minimumSize: MaterialStateProperty.all(Size.zero),
+              ),
+              onPressed: () async => {
+                    setFilter('Community Engagement'),
+                  },
+              child: Text(
+                'Community Engagement',
+                style: TextStyle(fontSize: 12),
+              )),
         ),
       ],
     );
@@ -124,7 +194,7 @@ class _FeedScreenState extends State<FeedScreen> {
           ),
           Text(
             description,
-            style: TextStyle(fontSize: 15),
+            style: TextStyle(fontSize: 16),
           ),
           SizedBox(
             height: 5,
@@ -136,16 +206,24 @@ class _FeedScreenState extends State<FeedScreen> {
           SizedBox(
             height: 5,
           ),
-          // Center(
-          //   child: RoundedRectangle(
-          //     childWidget: SizedBox(height: 200, child: Image.asset(image)),
-          //   ),
-          // ),
+          Center(
+            child: RoundedRectangle(
+              childWidget: SizedBox(
+                  height: 200,
+                  child: Image.asset(image != '' ? image : 'trail.jpg')),
+            ),
+          ),
           SizedBox(
             height: 8,
           ),
           Row(children: [
-            Icon(Icons.favorite_border, size: 20, color: Colors.black),
+            IconButton(
+              onPressed: () async => {
+                await DatabaseService()
+                    .updatePostsData(addLike: true, flagged: false),
+              },
+              icon: Icon(Icons.favorite_border, size: 20, color: Colors.black),
+            ),
             SizedBox(
               width: 4,
             ),
@@ -173,7 +251,7 @@ class _FeedScreenState extends State<FeedScreen> {
                     height: 16,
                   ),
                   Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                       child: Column(children: [
                         Stack(
                           children: [
@@ -193,8 +271,8 @@ class _FeedScreenState extends State<FeedScreen> {
                                       _user.name,
                                       'Title',
                                       'Description',
-                                      'Category',
-                                      'Image',
+                                      'Reusable Waterbottle', //'Category',
+                                      '',
                                       0,
                                       false,
                                       DateTime.now()),
@@ -217,7 +295,10 @@ class _FeedScreenState extends State<FeedScreen> {
                         ),
                         Wrap(
                           runSpacing: 16.0,
-                          children: postInfos.map((post) {
+                          children: postInfos
+                              .where((post) =>
+                                  filter == '' || post.category == filter)
+                              .map((post) {
                             return PostTemplate(
                               date: post.date,
                               name: post.name,

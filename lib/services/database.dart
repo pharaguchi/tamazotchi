@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class DatabaseService {
   final String uid;
   DatabaseService({this.uid = ''});
+  String filter = '';
 
   // collection references
 
@@ -97,10 +98,19 @@ class DatabaseService {
   }
 
   Stream<List<Post>> get post {
-    return postsCollection
-        .where('flagged', isEqualTo: false)
-        .snapshots()
-        .map((snapshot) {
+    Stream<QuerySnapshot> snapShots;
+    if (filter != '') {
+      snapShots = postsCollection
+          .where('category', isEqualTo: filter)
+          .where('flagged', isEqualTo: false)
+          .orderBy('date', descending: false)
+          .snapshots();
+    } else {
+      snapShots =
+          postsCollection.where('flagged', isEqualTo: false).snapshots();
+    }
+
+    return snapShots.map((snapshot) {
       if (snapshot.docs.isNotEmpty) {
         return snapshot.docs.map((doc) {
           Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
@@ -114,8 +124,17 @@ class DatabaseService {
   }
 
   Future<List<dynamic>> getPost() async {
-    QuerySnapshot querySnapshot =
-        await postsCollection.where('flagged', isEqualTo: false).get();
+    QuerySnapshot querySnapshot;
+    if (filter != '') {
+      querySnapshot = await postsCollection
+          .where('category', isEqualTo: filter)
+          .where('flagged', isEqualTo: false)
+          .orderBy('date', descending: false)
+          .get();
+    } else {
+      querySnapshot =
+          await postsCollection.where('flagged', isEqualTo: false).get();
+    }
 
     if (querySnapshot.docs.isNotEmpty) {
       DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
@@ -125,5 +144,11 @@ class DatabaseService {
     } else {
       throw Exception('No posts found');
     }
+  }
+
+  // Posts filter
+
+  setFilter(String filter) async {
+    this.filter = filter;
   }
 }
