@@ -4,6 +4,7 @@ import 'package:tamazotchi/components/loading.dart';
 import 'package:tamazotchi/config/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:carousel_slider/carousel_slider.dart';
 
 class Register extends StatefulWidget {
   final Function toggleView;
@@ -135,6 +136,24 @@ class _RegisterState extends State<Register> {
                         style: TextStyle(color: Colors.black, fontSize: 12.0),
                       ),
                       onPressed: () => widget.toggleView(),
+                    ),
+                    SizedBox(height: 35.0),
+                    CarouselSlider(
+                      items: List.generate(tamagotchiNames.length, (index) {
+                          return 'assets/Tamagotchi/${tamagotchiNames[index]}.webp';
+                        }).map((path) {
+                        return Image.asset(path,
+                        fit: BoxFit.contain,
+                        width: MediaQuery.of(context).size.width,
+                      );
+                    }).toList(), 
+                      options: CarouselOptions(
+                        height: 175.0,
+                        autoPlay: true,
+                        autoPlayInterval: Duration(seconds: 2),
+                        enlargeCenterPage: false,
+                        aspectRatio: 1 / 1,
+                      ),
                     ),
                   ],
                 ),
