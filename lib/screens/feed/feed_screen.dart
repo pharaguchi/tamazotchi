@@ -477,6 +477,8 @@ class _FeedScreenState extends State<FeedScreen> {
                                                                   'date':
                                                                       DateTime
                                                                           .now(),
+                                                                  'uid':
+                                                                      _user.uid
                                                                 });
                                                                 _formKey
                                                                     .currentState!

@@ -60,6 +60,7 @@ class DatabaseService {
     int likes,
     bool flagged,
     DateTime date,
+    String uid,
   ) async {
     await postsCollection.add({
       "name": name,
@@ -70,6 +71,7 @@ class DatabaseService {
       "likes": likes,
       "flagged": flagged,
       "date": date,
+      "uid": uid,
     });
   }
 
@@ -88,6 +90,7 @@ class DatabaseService {
       'image': post.image,
       'likes': addLike ? post.likes + 1 : post.likes,
       'flagged': flagged,
+      'uid': post.uid,
     });
   }
 

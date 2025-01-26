@@ -9,6 +9,7 @@ class Post {
   int likes;
   bool flagged;
   final DateTime date;
+  String uid;
 
   Post({
     this.name = '',
@@ -19,6 +20,7 @@ class Post {
     this.likes = 0,
     this.flagged = false,
     required this.date,
+    this.uid = '',
   });
 
   Post.fromData(Map<String, dynamic> data)
@@ -29,7 +31,8 @@ class Post {
         image = data['image'] ?? '',
         likes = data['likes'] ?? 0,
         flagged = data['flagged'] ?? false,
-        date = (data['date'] as Timestamp).toDate();
+        date = (data['date'] as Timestamp).toDate(),
+        uid = data['uid'] ?? '';
 
   Map<String, dynamic> toJson() {
     return {
@@ -40,6 +43,7 @@ class Post {
       'likes': likes,
       'flagged': flagged,
       'date': date,
+      'uid': uid,
     };
   }
 }
