@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 60), // Add some space to push the rest of the content down
         Center(
           child: Text(
-            'Hi ${_user.name}! I missed you <3', // Main text/content
+            'Hi ${_user.name}!', // Main text/content
             style: TextStyle(fontSize: 24),
           ),
         ),
