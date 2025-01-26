@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
         1); // You can adjust the index to the BadgePage index in your navigation bar
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => BadgePage()),
+      MaterialPageRoute(builder: (context) => BadgePage(user: _user)),
     );
   }
 
@@ -98,27 +98,30 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             GestureDetector(
-            onTap: _navigateToFriends,  // Navigate to FriendsPage on tap
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16, right: 16),  // Padding from top and right
-              child: Column(
-                mainAxisSize: MainAxisSize.min,  // The column only takes as much space as needed
-                crossAxisAlignment: CrossAxisAlignment.center,  // Center icon and text horizontally
-                children: [
-                  Icon(
-                    Icons.perm_contact_calendar_rounded,
-                    size: 70,  // Size of the badge icon
-                    color: Colors.blue,  // Icon color
-                  ),
-                  SizedBox(height: 8),  // Space between the icon and the text
-                  Text(
-                    'My Friends',  // Text displayed under the icon
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
+              onTap: _navigateToFriends, // Navigate to FriendsPage on tap
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    top: 16, right: 16), // Padding from top and right
+                child: Column(
+                  mainAxisSize: MainAxisSize
+                      .min, // The column only takes as much space as needed
+                  crossAxisAlignment: CrossAxisAlignment
+                      .center, // Center icon and text horizontally
+                  children: [
+                    Icon(
+                      Icons.perm_contact_calendar_rounded,
+                      size: 70, // Size of the badge icon
+                      color: Colors.blue, // Icon color
+                    ),
+                    SizedBox(height: 8), // Space between the icon and the text
+                    Text(
+                      'My Friends', // Text displayed under the icon
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
             GestureDetector(
               onTap: _navigateToBadges, // Navigate to Badges
               child: Padding(
