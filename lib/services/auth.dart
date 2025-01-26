@@ -1,6 +1,8 @@
 import 'package:tamazotchi/models/user.dart';
 import 'package:tamazotchi/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:tamazotchi/config/constants.dart';
+import 'dart:math';
 
 class AuthService {
   final firebase_auth.FirebaseAuth _auth = firebase_auth.FirebaseAuth.instance;
@@ -51,8 +53,17 @@ class AuthService {
       firebase_auth.UserCredential result = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
       firebase_auth.User? user = result.user;
-      // create a new document for the user with the uid
-      await DatabaseService(uid: user!.uid).updateUserData(name, email);
+
+      // Assign a random tamagotchi
+      final random = Random();
+      String randomTamagotchi =
+          tamagotchiNames[random.nextInt(tamagotchiNames.length)];
+
+      // Save the user data, including the tamagotchi
+      await DatabaseService(uid: user!.uid).updateUserData(
+          name: name, email: email, points: 0, tamagotchi: randomTamagotchi);
+
+      // Return user object
       return _userFromFirebaseUser(user, name: name, email: email);
     } catch (error) {
       print(error.toString());
