@@ -34,9 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Method to navigate to the BadgePage
   void _navigateToBadges() {
-    // Optionally update the navigation bar index (if needed)
-    setNavBarIdx(
-        1); // You can adjust the index to the BadgePage index in your navigation bar
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => BadgePage(user: _user)),
