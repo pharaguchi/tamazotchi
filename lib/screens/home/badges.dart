@@ -16,9 +16,9 @@ class _BadgePageState extends State<BadgePage> {
       'fullImage': 'assets/Badges/athlete.jpeg',  // Specific full badge image
       'description': 'Progress Check:',
       'milestones': [
-        {'description': 'Walk 5 miles', 'goal': 5, 'progress': 5},
-        {'description': 'Walk 10 miles', 'goal': 10, 'progress': 10},
-        {'description': 'Walk 50 miles', 'goal': 50, 'progress': 50},
+        {'description': '5-mile distance', 'goal': 5, 'progress': 5},
+        {'description': '10-mile distance', 'goal': 10, 'progress': 10},
+        {'description': '50-mile distance', 'goal': 50, 'progress': 50},
       ]
     },
     {
@@ -28,9 +28,9 @@ class _BadgePageState extends State<BadgePage> {
       'fullImage': 'assets/Badges/flower.jpeg',  // Specific full badge image
       'description': 'Progress Check:',
       'milestones': [
-        {'description': 'Walk 5 miles', 'goal': 5, 'progress': 5},
-        {'description': 'Walk 10 miles', 'goal': 10, 'progress': 10},
-        {'description': 'Walk 50 miles', 'goal': 50, 'progress': 50},
+        {'description': '5 hours', 'goal': 5, 'progress': 5},
+        {'description': '10 hours', 'goal': 10, 'progress': 10},
+        {'description': '50 hours', 'goal': 50, 'progress': 50},
       ]
     },
     {
@@ -40,9 +40,9 @@ class _BadgePageState extends State<BadgePage> {
       'fullImage': 'assets/Badges/sun.jpeg',  // Specific full badge image
       'description': 'Progress Check:',
       'milestones': [
-        {'description': 'Walk 5 miles', 'goal': 5, 'progress': 5},
-        {'description': 'Walk 10 miles', 'goal': 10, 'progress': 10},
-        {'description': 'Walk 50 miles', 'goal': 50, 'progress': 50},
+        {'description': '5 eco-friendly items', 'goal': 5, 'progress': 5},
+        {'description': '10 eco-friendly items', 'goal': 10, 'progress': 10},
+        {'description': '50 eco-friendly items', 'goal': 50, 'progress': 20},
       ]
     },
     {
@@ -52,9 +52,9 @@ class _BadgePageState extends State<BadgePage> {
       'fullImage': 'assets/Badges/water.jpeg',  // Specific full badge image
       'description': 'Progress Check:',
       'milestones': [
-        {'description': 'Walk 5 miles', 'goal': 5, 'progress': 5},
-        {'description': 'Walk 10 miles', 'goal': 10, 'progress': 10},
-        {'description': 'Walk 50 miles', 'goal': 50, 'progress': 50},
+        {'description': '64 ounces', 'goal': 64, 'progress': 5},
+        {'description': '128 ounces', 'goal': 128, 'progress': 10},
+        {'description': '265 ounces', 'goal': 256, 'progress': 50},
       ]
     },
     {
@@ -64,9 +64,9 @@ class _BadgePageState extends State<BadgePage> {
       'fullImage': 'assets/Badges/trashcan.jpeg',
       'description': 'Progress Check:',
       'milestones': [
-        {'description': 'Run 5 miles', 'goal': 5, 'progress': 5},
-        {'description': 'Run 10 miles', 'goal': 10, 'progress': 10},
-        {'description': 'Run 50 miles', 'goal': 50, 'progress': 50},
+        {'description': '5 items recycled or composed', 'goal': 5, 'progress': 5},
+        {'description': '10 items recycled or compose', 'goal': 10, 'progress': 10},
+        {'description': '50 items recycled or compose', 'goal': 50, 'progress': 50},
       ]
     },
     // Add other badges with specific images...
