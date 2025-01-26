@@ -9,11 +9,12 @@ class AuthService {
 
   // create user obj based on firebase user
   User? _userFromFirebaseUser(firebase_auth.User? user,
-      {String name = '', String email = ''}) {
+      {String name = '', String email = '', String friendId = ''}) {
     return User(
       uid: user?.uid ?? '',
       name: name,
       email: email,
+      friendId: friendId,
     );
   }
 
@@ -59,12 +60,38 @@ class AuthService {
       String randomTamagotchi =
           tamagotchiNames[random.nextInt(tamagotchiNames.length)];
 
+      // Generate a unique friendId
+      String friendId = user!.uid.substring(0, 6);
+
       // Save the user data, including the tamagotchi
       await DatabaseService(uid: user!.uid).updateUserData(
-          name: name, email: email, points: 0, tamagotchi: randomTamagotchi);
+        name: name,
+        email: email,
+        points: 0,
+        tamagotchi: randomTamagotchi,
+        isCompany: false,
+        friendId: friendId,
+        percentCarbonEmissionsReduced: 0,
+        percentSustainableMaterials: 0,
+        numGreenPartnerships: 0,
+        energyCostSavings: 0,
+        employeeVolunteerHours: 0,
+        miles: 0,
+        itemsRecycledOrComposted: 0,
+        numEcoFriendlyItems: 0,
+        ounces: 0,
+        hoursVolunteered: 0,
+        posts: [],
+        likedPosts: [],
+        reportedPosts: [],
+        friends: [],
+        sentRequests: [],
+        receivedRequests: [],
+      );
 
       // Return user object
-      return _userFromFirebaseUser(user, name: name, email: email);
+      return _userFromFirebaseUser(user,
+          name: name, email: email, friendId: friendId);
     } catch (error) {
       print(error.toString());
       return error;

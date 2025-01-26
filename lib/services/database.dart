@@ -12,16 +12,53 @@ class DatabaseService {
 
   // Users
 
-  Future<void> updateUserData(
-      {required String name,
-      required String email,
-      required int points,
-      required String tamagotchi}) async {
+  Future<void> updateUserData({
+    required String name,
+    required String email,
+    required int points,
+    required String tamagotchi,
+    required bool isCompany,
+    required String friendId,
+    int percentCarbonEmissionsReduced = 0,
+    int percentSustainableMaterials = 0,
+    int numGreenPartnerships = 0,
+    int energyCostSavings = 0,
+    int employeeVolunteerHours = 0,
+    int miles = 0,
+    int itemsRecycledOrComposted = 0,
+    int numEcoFriendlyItems = 0,
+    int ounces = 0,
+    int hoursVolunteered = 0,
+    List<String>? posts,
+    List<String>? likedPosts,
+    List<String>? reportedPosts,
+    List<String>? friends,
+    List<String>? sentRequests,
+    List<String>? receivedRequests,
+  }) async {
     return await userCollection.doc(uid).set({
       'name': name,
       'email': email,
       'points': points,
       'tamagotchi': tamagotchi,
+      'isCompany': isCompany,
+      'friendId': friendId,
+      'percentCarbonEmissionsReduced': percentCarbonEmissionsReduced,
+      'percentSustainableMaterials': percentSustainableMaterials,
+      'numGreenPartnerships': numGreenPartnerships,
+      'energyCostSavings': energyCostSavings,
+      'employeeVolunteerHours': employeeVolunteerHours,
+      'miles': miles,
+      'itemsRecycledOrComposted': itemsRecycledOrComposted,
+      'numEcoFriendlyItems': numEcoFriendlyItems,
+      'ounces': ounces,
+      'hoursVolunteered': hoursVolunteered,
+      'posts': posts ?? [],
+      'likedPosts': likedPosts ?? [],
+      'reportedPosts': reportedPosts ?? [],
+      'friends': friends ?? [],
+      'sentRequests': sentRequests ?? [],
+      'receivedRequests': receivedRequests ?? [],
     });
   }
 
@@ -44,12 +81,10 @@ class DatabaseService {
   User _userFromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
 
-    return User(
-        uid: uid,
-        name: data?['name'],
-        email: data?['email'],
-        points: data?['points'],
-        tamagotchi: data?['tamagotchi']);
+    return User.fromData({
+      'uid': snapshot.id, // Ensure UID is captured
+      ...?data, // Safely spread Firestore data
+    });
   }
 
   Stream<User> get user {
@@ -60,6 +95,21 @@ class DatabaseService {
   }
 
   // Helper Functions
+
+  Future<void> incrementBadge(String badgeName, int incrementBy) async {
+    await userCollection.doc(uid).update({
+      badgeName: FieldValue.increment(incrementBy),
+    });
+  }
+
+  Future<void> toggleIsCompany() async {
+    DocumentSnapshot snapshot = await userCollection.doc(uid).get();
+    bool currentStatus = snapshot['isCompany'] ?? false;
+
+    await userCollection.doc(uid).update({
+      'isCompany': !currentStatus,
+    });
+  }
 
   List<DateTime> getDayRange(DateTime date) {
     DateTime today = DateTime(date.year, date.month, date.day);
@@ -80,6 +130,85 @@ class DatabaseService {
           ...data, // Merge Firestore data
         });
       }).toList();
+    });
+  }
+
+  // Friend helper functions
+  Future<void> sendFriendRequest(String friendId) async {
+    // Check if friendId exists
+    QuerySnapshot snapshot = await userCollection
+        .where('friendId', isEqualTo: friendId)
+        .limit(1)
+        .get();
+    if (snapshot.docs.isEmpty) {
+      throw Exception('Friend ID does not exist.');
+    }
+
+    // Get the receiver's UID
+    String receiverUid = snapshot.docs.first.id;
+
+    // Update sender's sentRequests
+    await userCollection.doc(uid).update({
+      'sentRequests': FieldValue.arrayUnion([receiverUid]),
+    });
+
+    // Update receiver's receivedRequests
+    await userCollection.doc(receiverUid).update({
+      'receivedRequests': FieldValue.arrayUnion([uid]),
+    });
+  }
+
+  Future<void> acceptFriendRequest(String senderUid) async {
+    DocumentSnapshot receiverSnapshot = await userCollection.doc(uid).get();
+    DocumentSnapshot senderSnapshot = await userCollection.doc(senderUid).get();
+
+    List<dynamic> receiverPending = receiverSnapshot['receivedRequests'] ?? [];
+    List<dynamic> senderSent = senderSnapshot['sentRequests'] ?? [];
+
+    // Validate that the request exists
+    if (!receiverPending.contains(senderUid) || !senderSent.contains(uid)) {
+      throw Exception('Friend request is invalid or does not exist.');
+    }
+
+    // Update both users' friends lists
+    await userCollection.doc(uid).update({
+      'friends': FieldValue.arrayUnion([senderUid]),
+      'receivedRequests': FieldValue.arrayRemove([senderUid]),
+    });
+
+    await userCollection.doc(senderUid).update({
+      'friends': FieldValue.arrayUnion([uid]),
+      'sentRequests': FieldValue.arrayRemove([uid]),
+    });
+  }
+
+  Future<void> declineFriendRequest(String senderUid) async {
+    await userCollection.doc(uid).update({
+      'receivedRequests': FieldValue.arrayRemove([senderUid]),
+    });
+
+    await userCollection.doc(senderUid).update({
+      'sentRequests': FieldValue.arrayRemove([uid]),
+    });
+  }
+
+  Future<void> removeFriend(String friendUid) async {
+    await userCollection.doc(uid).update({
+      'friends': FieldValue.arrayRemove([friendUid]),
+    });
+
+    await userCollection.doc(friendUid).update({
+      'friends': FieldValue.arrayRemove([uid]),
+    });
+  }
+
+  Future<void> cancelFriendRequest(String friendUid) async {
+    await userCollection.doc(uid).update({
+      'sentRequests': FieldValue.arrayRemove([friendUid]),
+    });
+
+    await userCollection.doc(friendUid).update({
+      'receivedRequests': FieldValue.arrayRemove([uid]),
     });
   }
 }
