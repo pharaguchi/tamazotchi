@@ -29,6 +29,7 @@ class _FeedScreenState extends State<FeedScreen> {
   late User _user;
   late Function setNavBarIdx;
   String filter = '';
+  String feedType = '';
   String form_title = '';
   String form_description = '';
   String form_category = '';
@@ -41,6 +42,12 @@ class _FeedScreenState extends State<FeedScreen> {
   setFilter(filterName) {
     setState(() {
       filter = filterName;
+    });
+  }
+
+  setFeedType(feedTypeName) {
+    setState(() {
+      feedType = feedTypeName;
     });
   }
 
@@ -159,6 +166,62 @@ class _FeedScreenState extends State<FeedScreen> {
               )),
         ),
       ],
+    );
+  }
+
+  Widget get FeedTypes {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Wrap(
+        spacing: 4.0,
+        runSpacing: 8.0,
+        children: [
+          TextBubble(
+            childWidget: TextButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                minimumSize: MaterialStateProperty.all(Size.zero),
+              ),
+              onPressed: () async => {
+                setFeedType(''),
+              },
+              child: Text(
+                'All',
+                style: TextStyle(fontSize: 12),
+              ),
+            ),
+          ),
+          TextBubble(
+              childWidget: TextButton(
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all(EdgeInsets.zero),
+                  minimumSize: MaterialStateProperty.all(Size.zero),
+                ),
+                onPressed: () async => {
+                  setFeedType('Friend'),
+                },
+                child: Text(
+                  'Friends',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ),
+              containerColor: const Color.fromARGB(255, 165, 222, 170)),
+          TextBubble(
+            childWidget: TextButton(
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all(EdgeInsets.zero),
+                  minimumSize: MaterialStateProperty.all(Size.zero),
+                ),
+                onPressed: () async => {
+                      setFeedType('Company'),
+                    },
+                child: Text(
+                  'Companies',
+                  style: TextStyle(fontSize: 12),
+                )),
+          ),
+        ],
+      ),
     );
   }
 
@@ -486,6 +549,10 @@ class _FeedScreenState extends State<FeedScreen> {
                                                             'date':
                                                                 DateTime.now(),
                                                             'uid': _user.uid,
+                                                            'feedType':
+                                                                _user.isCompany
+                                                                    ? 'Company'
+                                                                    : '',
                                                           });
                                                           if (form_category ==
                                                               'Sustainable Transportation') {
@@ -584,13 +651,26 @@ class _FeedScreenState extends State<FeedScreen> {
                   ),
                   FilterOptions,
                   SizedBox(
+                    height: 8,
+                  ),
+                  FeedTypes,
+                  SizedBox(
                     height: 16,
                   ),
                   Wrap(
                     runSpacing: 16.0,
                     children: postInfos
+                        .where((post) =>
+                            (feedType == '' &&
+                                (post.feedType == 'Company' ||
+                                    _user.friends.contains(post.uid))) ||
+                            (feedType == 'Company' &&
+                                post.feedType == feedType) ||
+                            (feedType == 'Friend' &&
+                                _user.friends.contains(post.uid)))
                         .where(
                             (post) => filter == '' || post.category == filter)
+                        .where((post) => post.uid != _user.uid)
                         .map((post) {
                       return PostTemplate(
                         date: post.date,

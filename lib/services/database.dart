@@ -135,6 +135,7 @@ class DatabaseService {
     int flagged,
     DateTime date,
     String uid,
+    String feedType,
   ) async {
     await postsCollection.add({
       "name": name,
@@ -146,6 +147,7 @@ class DatabaseService {
       "flagged": flagged,
       "date": date,
       "uid": uid,
+      "feedType": feedType,
     });
   }
 
@@ -165,6 +167,7 @@ class DatabaseService {
       'likes': addLike ? post.likes + 1 : post.likes,
       'flagged': addFlagged ? post.flagged + 1 : post.flagged,
       'uid': post.uid,
+      'feedType': post.feedType,
     });
   }
 
