@@ -102,10 +102,16 @@ class _FeedScreenState extends State<FeedScreen> {
                     fontSize: 20,
                     color: Colors.black,
                   )),
-              Icon(
-                size: 30,
-                Icons.flag_outlined,
-                color: Colors.black,
+              IconButton(
+                onPressed: () async => {
+                  await DatabaseService()
+                      .updatePostsData(addLike: false, flagged: true),
+                },
+                icon: Icon(
+                  size: 30,
+                  Icons.flag_outlined,
+                  color: Colors.black,
+                ),
               ),
             ],
           ),
@@ -130,11 +136,11 @@ class _FeedScreenState extends State<FeedScreen> {
           SizedBox(
             height: 5,
           ),
-          Center(
-            child: RoundedRectangle(
-              childWidget: SizedBox(height: 200, child: Image.asset(image)),
-            ),
-          ),
+          // Center(
+          //   child: RoundedRectangle(
+          //     childWidget: SizedBox(height: 200, child: Image.asset(image)),
+          //   ),
+          // ),
           SizedBox(
             height: 8,
           ),
@@ -181,10 +187,23 @@ class _FeedScreenState extends State<FeedScreen> {
                             ),
                             Align(
                               alignment: Alignment.centerRight,
-                              child: Icon(
-                                size: 30,
-                                Icons.note_add_outlined,
-                                color: Colors.black,
+                              child: IconButton(
+                                onPressed: () async => {
+                                  await DatabaseService().createPost(
+                                      _user.name,
+                                      'Title',
+                                      'Description',
+                                      'Category',
+                                      'Image',
+                                      0,
+                                      false,
+                                      DateTime.now()),
+                                },
+                                icon: Icon(
+                                  size: 30,
+                                  Icons.note_add_outlined,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                           ],
@@ -196,7 +215,8 @@ class _FeedScreenState extends State<FeedScreen> {
                         SizedBox(
                           height: 16,
                         ),
-                        Column(
+                        Wrap(
+                          runSpacing: 16.0,
                           children: postInfos.map((post) {
                             return PostTemplate(
                               date: post.date,
@@ -216,8 +236,7 @@ class _FeedScreenState extends State<FeedScreen> {
                       ]))
                 ]);
           } else {
-            // return SizedBox(height: 0);
-            return Text('NONE FOUND');
+            return SizedBox(height: 0);
           }
         });
   }

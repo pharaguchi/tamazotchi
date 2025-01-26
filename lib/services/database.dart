@@ -72,7 +72,7 @@ class DatabaseService {
     });
   }
 
-  Future<void> updatePostsData(String uid, DateTime date,
+  Future<void> updatePostsData(
       {bool addLike = false, bool flagged = false}) async {
     List<dynamic> postInfo = await getPost();
     Post post = postInfo[0];
@@ -86,7 +86,7 @@ class DatabaseService {
       'category': post.category,
       'image': post.image,
       'likes': addLike ? post.likes + 1 : post.likes,
-      'flagged': post.flagged,
+      'flagged': flagged,
     });
   }
 
@@ -97,7 +97,10 @@ class DatabaseService {
   }
 
   Stream<List<Post>> get post {
-    return postsCollection.snapshots().map((snapshot) {
+    return postsCollection
+        .where('flagged', isEqualTo: false)
+        .snapshots()
+        .map((snapshot) {
       if (snapshot.docs.isNotEmpty) {
         return snapshot.docs.map((doc) {
           Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
@@ -105,17 +108,14 @@ class DatabaseService {
           return _postFromSnapshot(doc);
         }).toList();
       } else {
-        return [
-          Post(
-            date: DateTime.now(),
-          )
-        ];
+        return [];
       }
     });
   }
 
   Future<List<dynamic>> getPost() async {
-    QuerySnapshot querySnapshot = await postsCollection.get();
+    QuerySnapshot querySnapshot =
+        await postsCollection.where('flagged', isEqualTo: false).get();
 
     if (querySnapshot.docs.isNotEmpty) {
       DocumentSnapshot documentSnapshot = querySnapshot.docs.first;
