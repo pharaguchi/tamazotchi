@@ -185,31 +185,9 @@ class _FeedScreenState extends State<FeedScreen> {
               ),
             ],
           ),
-          Text(
-            'by ' + name,
-            style: TextStyle(fontSize: 12),
-          ),
-          SizedBox(
-            height: 4,
-          ),
-          Text(
-            description,
-            style: TextStyle(fontSize: 16),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Text(
-            '#' + category,
-            style: TextStyle(fontSize: 12),
-          ),
-          SizedBox(
-            height: 5,
-          ),
           Center(
             child: RoundedRectangle(
               childWidget: SizedBox(
-                  height: 200,
                   child: Image.asset(image != '' ? image : 'trail.jpg')),
             ),
           ),
@@ -218,6 +196,10 @@ class _FeedScreenState extends State<FeedScreen> {
           ),
           Row(children: [
             IconButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(EdgeInsets.zero),
+                minimumSize: MaterialStateProperty.all(Size.zero),
+              ),
               onPressed: () async => {
                 await DatabaseService()
                     .updatePostsData(addLike: true, flagged: false),
@@ -229,7 +211,34 @@ class _FeedScreenState extends State<FeedScreen> {
             ),
             Text(likes.toString() + ' likes',
                 style: TextStyle(fontSize: 15, color: Colors.black)),
-          ])
+          ]),
+          SizedBox(
+            height: 4,
+          ),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: name, // Bold the name
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                  text: ' ' + description, // Keep description in normal weight
+                  style: TextStyle(fontSize: 15),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 5,
+          ),
+          Text(
+            '#' + category,
+            style: TextStyle(fontSize: 12),
+          ),
+          SizedBox(
+            height: 5,
+          ),
         ]),
       ),
       containerColor: const Color(0xFFD2C3B3),
@@ -270,7 +279,7 @@ class _FeedScreenState extends State<FeedScreen> {
                                   await DatabaseService().createPost(
                                       _user.name,
                                       'Title',
-                                      'Description',
+                                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
                                       'Reusable Waterbottle', //'Category',
                                       '',
                                       0,
