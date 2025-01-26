@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tamazotchi/screens/home/home_screen.dart';
+import 'package:tamazotchi/screens/leaderboard/leaderboard_screen.dart';
+import 'package:tamazotchi/screens/settings/settings_screen.dart';
 import 'package:tamazotchi/services/auth.dart';
 import 'package:tamazotchi/models/user.dart';
 import 'package:tamazotchi/services/database.dart';
@@ -16,7 +18,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final AuthService _auth = AuthService();
-  int navBarIdx = 1;
+  int navBarIdx = 0;
 
   setNavBarIdx(idx) {
     setState(() {
@@ -34,7 +36,8 @@ class _HomeState extends State<Home> {
             List<Widget> pages = [
               HomeScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
               FeedScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
-              HomeScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
+              SettingsScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
+              LeaderboardScreen(user: userInfo, setNavBarIdx: setNavBarIdx),
             ];
 
             return Scaffold(
@@ -55,6 +58,8 @@ class _HomeState extends State<Home> {
                           icon: Icon(Icons.chat_bubble), label: 'Feed'),
                       BottomNavigationBarItem(
                           icon: Icon(Icons.settings), label: 'Setting'),
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.leaderboard), label: 'Leaderboard'),
                     ],
                   ),
                 ),
